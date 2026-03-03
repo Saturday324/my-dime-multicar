@@ -1,0 +1,26 @@
+{"time":"2026-02-27T10:44:34.931955876Z","level":"INFO","msg":"stream: starting","core version":"0.25.0"}
+{"time":"2026-02-27T10:44:36.073497982Z","level":"INFO","msg":"stream: created new stream","id":"0xplro3h"}
+{"time":"2026-02-27T10:44:36.073609901Z","level":"INFO","msg":"handler: started","stream_id":"0xplro3h"}
+{"time":"2026-02-27T10:44:36.075506804Z","level":"INFO","msg":"stream: started","id":"0xplro3h"}
+{"time":"2026-02-27T10:44:36.075522331Z","level":"INFO","msg":"sender: started","stream_id":"0xplro3h"}
+{"time":"2026-02-27T10:44:36.075519912Z","level":"INFO","msg":"writer: started","stream_id":"0xplro3h"}
+{"time":"2026-02-27T10:44:53.141599272Z","level":"WARN","msg":"tensorboard: no root directory","error":"timed out after 10s"}
+{"time":"2026-02-27T10:44:53.142029895Z","level":"INFO","msg":"tensorboard: tracking new log directory","rootDir":{},"logDir":"LocalOrCloudPath(LocalPath=\"/workspace/diffusion-rl/DIME/logs/DIME_Humanoid-v4/lr0.0003/seed= + 0/SAC_3\")","namespace":""}
+{"time":"2026-02-27T10:44:53.143072762Z","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/workspace/diffusion-rl/DIME/logs/DIME_Humanoid-v4/lr0.0003/seed= + 0/SAC_3/events.out.tfevents.1772189083.diffusion-onlinerl-lys-0.69342.0","runPath":"logs/DIME_Humanoid-v4/lr0.0003/seed= + 0/SAC_3/events.out.tfevents.1772189083.diffusion-onlinerl-lys-0.69342.0"}
+{"time":"2026-02-27T10:44:53.150437028Z","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":1036}
+{"time":"2026-02-27T10:44:53.161840845Z","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":965}
+{"time":"2026-02-27T10:45:43.215225718Z","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":2549}
+{"time":"2026-02-27T10:45:43.215326498Z","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":1}
+{"time":"2026-02-27T10:45:48.240527282Z","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":2764}
+{"time":"2026-02-27T10:45:48.240916259Z","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":51}
+{"time":"2026-02-27T10:45:53.264951154Z","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":2896}
+{"time":"2026-02-27T10:45:53.268670913Z","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":93}
+{"time":"2026-02-27T10:46:08.333398576Z","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":3333}
+{"time":"2026-02-27T10:46:08.333483499Z","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":1}
+{"time":"2026-02-27T10:46:20.127384402Z","level":"INFO","msg":"stream: closing","id":"0xplro3h"}
+{"time":"2026-02-27T10:46:20.127871411Z","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":3668}
+{"time":"2026-02-27T10:46:20.127948893Z","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":1}
+{"time":"2026-02-27T10:46:21.455374549Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-02-27T10:46:22.243579074Z","level":"INFO","msg":"handler: closed","stream_id":"0xplro3h"}
+{"time":"2026-02-27T10:46:22.244901165Z","level":"INFO","msg":"sender: closed","stream_id":"0xplro3h"}
+{"time":"2026-02-27T10:46:22.2449143Z","level":"INFO","msg":"stream: closed","id":"0xplro3h"}

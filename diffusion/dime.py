@@ -51,9 +51,9 @@ class DIME(OffPolicyAlgorithmJax):
     def __init__(self,
                  policy,
                  env: Union[GymEnv, str],
-                 model_save_path: str,
-                 save_every_n_steps: int,
-                 cfg,
+                 model_save_path: Optional[str] = None,
+                 save_every_n_steps: int = 10_000,
+                 cfg=None,
                  train_freq: Union[int, Tuple[int, str]] = 1,
                  action_noise: Optional[ActionNoise] = None,
                  replay_buffer_class: Optional[Type[ReplayBuffer]] = None,
@@ -63,21 +63,51 @@ class DIME(OffPolicyAlgorithmJax):
                  use_sde_at_warmup: bool = False,
                  tensorboard_log: Optional[str] = None,
                  verbose: int = 0,
+                 device: str = "auto",
                  _init_setup_model: bool = True,
                  stats_window_size: int = 100,
                  ) -> None:
+        # Defaults are used when loading from SB3 zip via DIME.load(...), where cfg
+        # is restored later from serialized data before _setup_model() runs.
+        if cfg is not None:
+            lr_actor = cfg.alg.optimizer.lr_actor
+            lr_critic = cfg.alg.optimizer.lr_critic
+            buffer_size = cfg.alg.buffer_size
+            learning_starts = cfg.alg.learning_starts
+            batch_size = cfg.alg.batch_size
+            tau = cfg.alg.tau
+            gamma = cfg.alg.gamma
+            gradient_steps = cfg.alg.utd
+            seed = cfg.seed
+            policy_delay = cfg.alg.policy_delay
+            ent_coef_params = cfg.alg.ent_coef
+            policy_tau = cfg.alg.policy_tau
+        else:
+            lr_actor = 3e-4
+            lr_critic = 3e-4
+            buffer_size = 1_000_000
+            learning_starts = 100
+            batch_size = 256
+            tau = 0.005
+            gamma = 0.99
+            gradient_steps = 1
+            seed = None
+            policy_delay = 1
+            ent_coef_params = {"type": "auto", "init": 1.0}
+            policy_tau = 1.0
+
         super().__init__(
             policy=policy,
             env=env,
-            learning_rate=cfg.alg.optimizer.lr_actor,
-            qf_learning_rate=cfg.alg.optimizer.lr_critic,
-            buffer_size=cfg.alg.buffer_size,
-            learning_starts=cfg.alg.learning_starts,
-            batch_size=cfg.alg.batch_size,
-            tau=cfg.alg.tau,
-            gamma=cfg.alg.gamma,
+            learning_rate=lr_actor,
+            qf_learning_rate=lr_critic,
+            buffer_size=buffer_size,
+            learning_starts=learning_starts,
+            batch_size=batch_size,
+            tau=tau,
+            gamma=gamma,
             train_freq=train_freq,
-            gradient_steps=cfg.alg.utd,
+            gradient_steps=gradient_steps,
             action_noise=action_noise,
             replay_buffer_class=replay_buffer_class,
             replay_buffer_kwargs=replay_buffer_kwargs,
@@ -87,21 +117,24 @@ class DIME(OffPolicyAlgorithmJax):
             policy_kwargs=None,
             tensorboard_log=tensorboard_log,
             verbose=verbose,
-            seed=cfg.seed,
+            device=device,
+            seed=seed,
             supported_action_spaces=(spaces.Box,),
             support_multi_env=True,
             stats_window_size=stats_window_size,
         )
         self.cfg = cfg
-        self.policy_delay = self.cfg.alg.policy_delay
-        self.ent_coef_params = self.cfg.alg.ent_coef
+        self.policy_delay = policy_delay
+        self.ent_coef_params = ent_coef_params
         self.crossq_style = True
         self.use_bnstats_from_live_net = False
         self.policy_q_reduce_fn = jax.numpy.mean
         self.save_every_n_steps = save_every_n_steps
         self.model_save_path = model_save_path
-        self.policy_tau = self.cfg.alg.policy_tau
+        self.policy_tau = policy_tau
         if _init_setup_model:
+            if self.cfg is None:
+                raise ValueError("cfg must be provided when _init_setup_model=True.")
             self._setup_model()
 
     def _setup_model(self, reset=False) -> None:
@@ -232,8 +265,8 @@ class DIME(OffPolicyAlgorithmJax):
         )
         self._n_updates += gradient_steps
 
-        if self.model_save_path is not None:
-            if (self.num_timesteps % self.save_every_n_steps == 0) or (self.num_timesteps == (self.learning_starts+1)):
+        if self.model_save_path is not None and self.save_every_n_steps > 0:
+            if self.num_timesteps % self.save_every_n_steps == 0:
                 self._save_model()
 
         self.logger.record("train/n_updates", self._n_updates, exclude="tensorboard")

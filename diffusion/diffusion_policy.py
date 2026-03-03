@@ -120,6 +120,7 @@ class DiffPol(BaseJaxPolicy):
 
     def _predict(self, observation: np.ndarray, deterministic: bool = False) -> np.ndarray:
         # Trick to use gSDE: repeat sampled noise by using the same noise key
+        # # 使用gSDE的技巧：通过使用相同的噪声密钥来重复采样的噪声
         if not self.use_sde:
             self.reset_noise()
         actions, *_ = DiffPol.sample_action(self.actor_state, self.actor_state.params, observation, self.noise_key,
@@ -138,6 +139,7 @@ class DiffPol(BaseJaxPolicy):
     def reset_noise(self, batch_size: int = 1) -> None:
         """
         Sample new weights for the exploration matrix, when using gSDE.
+        使用gSDE时，探索矩阵的新权重示例。
         """
         self.key, self.noise_key = jax.random.split(self.key, 2)
 

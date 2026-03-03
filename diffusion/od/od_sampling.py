@@ -5,26 +5,29 @@ import jax.numpy as jnp
 
 def single_sample(seed, model_state, params, obs, integrator, diffusion_model, stop_grad=False):
     key, key_gen = jax.random.split(seed)
-
+# 初始化随机噪声
     init_x = diffusion_model.prior_sampler(params, key, 1)
     key, key_gen = jax.random.split(key_gen)
+    # 删除 init_x 中维度为 1 的第 0 轴；
     init_x = jnp.squeeze(init_x, 0)
-    if stop_grad:
+    if stop_grad:  # 如果 stop_grad 为 True，则将 init_x 的梯度停止；
         init_x = jax.lax.stop_gradient(init_x)
     key, key_gen = jax.random.split(key_gen)
     aux = (init_x, jnp.zeros(1), key)
     integrate = integrator(model_state, params, obs, stop_grad)
     aux, per_step_output = jax.lax.scan(integrate, aux, jnp.arange(0, diffusion_model.num_steps))
     final_x, log_ratio, _ = aux
+    # final_x 是最终的噪声，log_ratio 是 log 概率；per_step_output 是每一步的xt轨迹；
 
     terminal_costs = diffusion_model.prior_log_prob(init_x, params)
     running_cost = -(log_ratio + distrax.Tanh().forward_log_det_jacobian(final_x).sum())
     # running_cost = -log_ratio
-
+# 将 final_x 转换为 tanh 空间；
     final_x = distrax.Tanh().forward(final_x)
     x_t = per_step_output
     x_t = jnp.concatenate([jnp.expand_dims(init_x, 0), x_t])
     x_t = x_t.at[-1].set(final_x)
+    # 得到从x_0到x_T的完整轨迹；
     stochastic_costs = jnp.zeros_like(running_cost)
     return final_x, running_cost, stochastic_costs, terminal_costs.reshape(running_cost.shape), x_t, None
 

@@ -32,15 +32,19 @@ def _create_alg(cfg: DictConfig):
     if env_name_split[0] == 'dm_control':
         rb_class = DMCCompatibleDictReplayBuffer if env_name_split[1].split('-')[0] in ['humanoid', 'fish', 'walker', 'quadruped','finger'] else None
 
-    tensorboard_log_dir = f"./logs/{cfg.wandb['group']}/{cfg.wandb['job_type']}/seed= + {str(cfg.seed)}/"
-    eval_log_dir = f"./eval_logs/{cfg.wandb['group']}/{cfg.wandb['job_type']}/seed= + {str(cfg.seed)}/eval/"
+    run_start = time.strftime("%Y%m%d-%H%M%S")
+    run_id = f"seed={cfg.seed}_start={run_start}"
+    tensorboard_log_dir = f"./logs/{cfg.wandb['group']}/{cfg.wandb['job_type']}/{run_id}/"
+    eval_log_dir = f"./eval_logs/{cfg.wandb['group']}/{cfg.wandb['job_type']}/{run_id}/eval/"
+    model_save_dir = f"./checkpoints/{cfg.wandb['group']}/{cfg.wandb['job_type']}/{run_id}/"
+    best_model_dir = f"./best_models/{cfg.wandb['group']}/{cfg.wandb['job_type']}/{run_id}/"
 
 
     model = DIME(
         "MultiInputPolicy" if isinstance(training_env.observation_space, gym.spaces.Dict) else "MlpPolicy",
         env=training_env,
-        model_save_path=None,
-        save_every_n_steps=int(cfg.tot_time_steps / 100000),
+        model_save_path=model_save_dir,
+        save_every_n_steps=0,
         cfg=cfg,
         tensorboard_log=tensorboard_log_dir,
         replay_buffer_class=rb_class
@@ -48,12 +52,14 @@ def _create_alg(cfg: DictConfig):
 
     # Create log dir where evaluation results will be saved
     os.makedirs(eval_log_dir, exist_ok=True)
+    os.makedirs(model_save_dir, exist_ok=True)
+    os.makedirs(best_model_dir, exist_ok=True)
     # Create callback that evaluates agent
 
     eval_callback = EvalCallback(
         eval_env,
         jax_random_key_for_seeds=cfg.seed,
-        best_model_save_path=None,
+        best_model_save_path=best_model_dir,
         log_path=eval_log_dir,
         eval_freq=max(300000 // cfg.log_freq, 1),
         n_eval_episodes=5, deterministic=True, render=False
@@ -113,3 +119,4 @@ def main(cfg: DictConfig) -> None:
 
 if __name__ == "__main__":
     main()
+

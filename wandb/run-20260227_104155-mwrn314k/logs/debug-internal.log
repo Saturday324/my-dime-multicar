@@ -1,0 +1,16 @@
+{"time":"2026-02-27T10:41:55.692731528Z","level":"INFO","msg":"stream: starting","core version":"0.25.0"}
+{"time":"2026-02-27T10:41:56.64665355Z","level":"INFO","msg":"stream: created new stream","id":"mwrn314k"}
+{"time":"2026-02-27T10:41:56.646705382Z","level":"INFO","msg":"handler: started","stream_id":"mwrn314k"}
+{"time":"2026-02-27T10:41:56.648968515Z","level":"INFO","msg":"stream: started","id":"mwrn314k"}
+{"time":"2026-02-27T10:41:56.648983163Z","level":"INFO","msg":"writer: started","stream_id":"mwrn314k"}
+{"time":"2026-02-27T10:41:56.648991275Z","level":"INFO","msg":"sender: started","stream_id":"mwrn314k"}
+{"time":"2026-02-27T10:42:13.325815186Z","level":"WARN","msg":"tensorboard: no root directory","error":"timed out after 10s"}
+{"time":"2026-02-27T10:42:13.326153444Z","level":"INFO","msg":"tensorboard: tracking new log directory","rootDir":{},"logDir":"LocalOrCloudPath(LocalPath=\"/workspace/diffusion-rl/DIME/logs/DIME_Humanoid-v4/lr0.0003/seed= + 0/SAC_2\")","namespace":""}
+{"time":"2026-02-27T10:42:13.327169425Z","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/workspace/diffusion-rl/DIME/logs/DIME_Humanoid-v4/lr0.0003/seed= + 0/SAC_2/events.out.tfevents.1772188923.diffusion-onlinerl-lys-0.66730.0","runPath":"logs/DIME_Humanoid-v4/lr0.0003/seed= + 0/SAC_2/events.out.tfevents.1772188923.diffusion-onlinerl-lys-0.66730.0"}
+{"time":"2026-02-27T10:42:13.333756526Z","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":1127}
+{"time":"2026-02-27T10:42:13.347863257Z","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":873}
+{"time":"2026-02-27T10:42:57.351474525Z","level":"INFO","msg":"stream: closing","id":"mwrn314k"}
+{"time":"2026-02-27T10:42:58.500481848Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-02-27T10:42:59.123256445Z","level":"INFO","msg":"handler: closed","stream_id":"mwrn314k"}
+{"time":"2026-02-27T10:42:59.124598285Z","level":"INFO","msg":"sender: closed","stream_id":"mwrn314k"}
+{"time":"2026-02-27T10:42:59.124609508Z","level":"INFO","msg":"stream: closed","id":"mwrn314k"}

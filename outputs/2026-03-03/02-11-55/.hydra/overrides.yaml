@@ -1,0 +1,7 @@
+- env_name=MountainCarContinuous-v0
+- wandb.activate=false
+- tot_time_steps=300000
+- alg.learning_starts=1000
+- alg.critic.hs=[256,256]
+- alg.critic.v_min=-120
+- alg.critic.v_max=120

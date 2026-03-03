@@ -1,0 +1,3 @@
+- env_name=Humanoid-v4
+- alg.critic.v_min=-1600
+- alg.critic.v_max=1600

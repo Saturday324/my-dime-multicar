@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DIME 项目架构与模型可视化</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111935;
+      --card: #172143;
+      --text: #e7ecff;
+      --muted: #97a6d6;
+      --line: #6f84ff;
+      --accent: #6fd3ff;
+      --ok: #5ee6a8;
+      --warn: #ffd06b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      background: radial-gradient(circle at 20% 0%, #1a2550 0%, var(--bg) 45%);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    .wrap { max-width: 1300px; margin: 0 auto; padding: 28px 24px 80px; }
+    h1, h2 { margin: 0 0 12px; }
+    p { margin: 0; color: var(--muted); }
+    .hero {
+      border: 1px solid #2a396e;
+      background: linear-gradient(180deg, #17244b, #121b39);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .chip {
+      border: 1px solid #35539a;
+      color: #dbe6ff;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #13244c;
+    }
+    .tabs { display: flex; gap: 8px; margin: 16px 0 18px; flex-wrap: wrap; }
+    .tab {
+      border: 1px solid #35539a;
+      color: #d0dcff;
+      background: #111b3a;
+      border-radius: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .tab.active {
+      background: linear-gradient(180deg, #2347a0, #17357b);
+      border-color: #5a88ff;
+      color: white;
+    }
+    .panel {
+      display: none;
+      border: 1px solid #273760;
+      background: linear-gradient(180deg, #0f1732, #0e1630);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .panel.active { display: block; }
+    .hint { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px dashed #2f4275;
+      border-radius: 12px;
+      background: #0d1530;
+    }
+    .legend {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 12px;
+      color: #c8d6ff;
+    }
+    .lg { padding: 3px 8px; border-radius: 8px; border: 1px solid #3a4b86; }
+    .code {
+      margin-top: 10px;
+      color: #c5d2fb;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      background: #121b3d;
+      border: 1px solid #2c3e73;
+      border-radius: 10px;
+      padding: 10px;
+      overflow-x: auto;
+    }
+    .footer {
+      margin-top: 18px;
+      border: 1px solid #2a396e;
+      border-radius: 12px;
+      padding: 14px;
+      background: #10193a;
+      color: #cdd9ff;
+      font-size: 13px;
+    }
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: #e9f1ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>DIME 项目架构与模型结构可视化</h1>
+      <p>基于当前代码自动整理：训练入口、算法层、扩散策略 Actor、分布式双 Q Critic、推理/评估链路。</p>
+      <div class="chips">
+        <span class="chip">Framework: JAX + Flax + Optax</span>
+        <span class="chip">RL Core: SB3 OffPolicyAlgorithm 扩展</span>
+        <span class="chip">Sampler: DIS (OD, Euler-Maruyama)</span>
+        <span class="chip">Actor Diffusion Steps: 16</span>
+        <span class="chip">Critic: n_critics=2, n_atoms=101</span>
+      </div>
+    </section>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="arch">项目架构图</button>
+      <button class="tab" data-tab="train">训练数据流</button>
+      <button class="tab" data-tab="actor">模型结构1：Diffusion Actor</button>
+      <button class="tab" data-tab="critic">模型结构2：Distributional Critic</button>
+    </div>
+
+    <section class="panel active" id="arch">
+      <div class="hint">核心模块之间的依赖与调用关系（主干路径）。</div>
+      <svg viewBox="0 0 1280 760" aria-label="项目架构图">
+        <defs>
+          <marker id="arrow1" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#83a0ff"></polygon>
+          </marker>
+        </defs>
+
+        <rect x="30" y="34" width="250" height="90" rx="10" fill="#1f356e" stroke="#6f91ff"/>
+        <text x="48" y="63" fill="#fff" font-size="18">run_dime.py</text>
+        <text x="48" y="88" fill="#d0dcff" font-size="13">Hydra 配置 + 环境构建 + 训练入口</text>
+
+        <rect x="350" y="34" width="270" height="90" rx="10" fill="#21485f" stroke="#6fd3ff"/>
+        <text x="368" y="63" fill="#fff" font-size="18">configs/</text>
+        <text x="368" y="88" fill="#d0fcff" font-size="13">base / alg/dime / sampler/dis / score_model</text>
+
+        <rect x="700" y="34" width="250" height="90" rx="10" fill="#3a2e6a" stroke="#9f89ff"/>
+        <text x="718" y="63" fill="#fff" font-size="18">models/actor_critic_evaluation_callback.py</text>
+        <text x="718" y="88" fill="#dfd3ff" font-size="13">评估 + best_model 保存</text>
+
+        <rect x="30" y="190" width="300" height="110" rx="10" fill="#264163" stroke="#84b4ff"/>
+        <text x="48" y="222" fill="#fff" font-size="19">diffusion/dime.py (DIME)</text>
+        <text x="48" y="249" fill="#dce9ff" font-size="13">继承 OffPolicyAlgorithmJax</text>
+        <text x="48" y="269" fill="#dce9ff" font-size="13">train(): update_critic / update_actor / alpha</text>
+
+        <rect x="390" y="190" width="290" height="110" rx="10" fill="#1e4a4a" stroke="#79f2d0"/>
+        <text x="408" y="222" fill="#fff" font-size="19">diffusion/diffusion_policy.py (DiffPol)</text>
+        <text x="408" y="249" fill="#ddfff8" font-size="13">build(): Actor + Target Actor + Critic</text>
+        <text x="408" y="269" fill="#ddfff8" font-size="13">sample_action(): 通过 Sampler 采样动作</text>
+
+        <rect x="740" y="190" width="250" height="110" rx="10" fill="#4e3c21" stroke="#ffc670"/>
+        <text x="758" y="222" fill="#fff" font-size="19">common/off_policy_algorithm.py</text>
+        <text x="758" y="249" fill="#fff0cf" font-size="13">SB3 JAX 化封装</text>
+        <text x="758" y="269" fill="#fff0cf" font-size="13">ReplayBuffer + 训练循环底座</text>
+
+        <rect x="30" y="366" width="300" height="130" rx="10" fill="#1f325e" stroke="#8cb3ff"/>
+        <text x="48" y="398" fill="#fff" font-size="18">diffusion/od/dis.py + od_integrators.py</text>
+        <text x="48" y="423" fill="#dce9ff" font-size="13">初始化 DiffusionModel</text>
+        <text x="48" y="444" fill="#dce9ff" font-size="13">Euler-Maruyama 时间积分</text>
+        <text x="48" y="465" fill="#dce9ff" font-size="13">prior / drift / dt / friction</text>
+
+        <rect x="390" y="366" width="290" height="130" rx="10" fill="#204853" stroke="#6fd3ff"/>
+        <text x="408" y="398" fill="#fff" font-size="18">diffusion/common/models/pisgrad_net.py</text>
+        <text x="408" y="423" fill="#dcf9ff" font-size="13">PISGRADNet: 时间编码 + 条件分数网络</text>
+        <text x="408" y="444" fill="#dcf9ff" font-size="13">输入: x_t, obs, t, target_score</text>
+        <text x="408" y="465" fill="#dcf9ff" font-size="13">输出: 扩散步的 score 修正项</text>
+
+        <rect x="740" y="366" width="250" height="130" rx="10" fill="#4d2d4d" stroke="#f09bff"/>
+        <text x="758" y="398" fill="#fff" font-size="18">models/critic.py</text>
+        <text x="758" y="423" fill="#ffd9ff" font-size="13">VectorCritic (vmap 双 Q)</text>
+        <text x="758" y="444" fill="#ffd9ff" font-size="13">分布式价值输出 n_atoms=101</text>
+        <text x="758" y="465" fill="#ffd9ff" font-size="13">Q = Σ p(z) * z</text>
+
+        <rect x="1070" y="290" width="170" height="120" rx="10" fill="#2b5a2f" stroke="#8bf095"/>
+        <text x="1088" y="324" fill="#fff" font-size="18">play_dime.py</text>
+        <text x="1088" y="346" fill="#e8ffe9" font-size="13">msgpack 回放</text>
+        <text x="1088" y="368" fill="#e8ffe9" font-size="13">video 导出</text>
+
+        <rect x="1070" y="440" width="170" height="120" rx="10" fill="#2f5b2b" stroke="#9df081"/>
+        <text x="1088" y="474" fill="#fff" font-size="18">play_best_dime.py</text>
+        <text x="1088" y="496" fill="#ecffe8" font-size="13">best_model.zip</text>
+        <text x="1088" y="518" fill="#ecffe8" font-size="13">评估/渲染</text>
+
+        <line x1="280" y1="79" x2="350" y2="79" stroke="#83a0ff" stroke-width="2.5" marker-end="url(#arrow1)"/>
+        <line x1="620" y1="79" x2="700" y2="79" stroke="#83a0ff" stroke-width="2.5" marker-end="url(#arrow1)"/>
+        <line x1="155" y1="124" x2="155" y2="190" stroke="#83a0ff" stroke-width="2.5" marker-end="url(#arrow1)"/>
+        <line x1="330" y1="245" x2="390" y2="245" stroke="#83a0ff" stroke-width="2.5" marker-end="url(#arrow1)"/>
+        <line x1="680" y1="245" x2="740" y2="245" stroke="#83a0ff" stroke-width="2.5" marker-end="url(#arrow1)"/>
+        <line x1="180" y1="300" x2="180" y2="366" stroke="#83a0ff" stroke-width="2.5" marker-end="url(#arrow1)"/>
+        <line x1="330" y1="431" x2="390" y2="431" stroke="#83a0ff" stroke-width="2.5" marker-end="url(#arrow1)"/>
+        <line x1="680" y1="431" x2="740" y2="431" stroke="#83a0ff" stroke-width="2.5" marker-end="url(#arrow1)"/>
+        <line x1="990" y1="245" x2="1070" y2="330" stroke="#83a0ff" stroke-width="2.5" marker-end="url(#arrow1)"/>
+        <line x1="990" y1="420" x2="1070" y2="500" stroke="#83a0ff" stroke-width="2.5" marker-end="url(#arrow1)"/>
+      </svg>
+      <div class="legend">
+        <span class="lg">蓝色：训练主线</span>
+        <span class="lg">绿色：扩散策略</span>
+        <span class="lg">紫色：Critic 与评估</span>
+        <span class="lg">橙色：底层算法框架</span>
+      </div>
+    </section>
+
+    <section class="panel" id="train">
+      <div class="hint">一次训练迭代中的关键计算路径（从 ReplayBuffer 到参数更新）。</div>
+      <svg viewBox="0 0 1280 620" aria-label="训练数据流图">
+        <defs>
+          <marker id="arrow2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#80f0d0"></polygon>
+          </marker>
+        </defs>
+        <rect x="30" y="70" width="190" height="80" rx="10" fill="#233f72" stroke="#85abff"/>
+        <text x="50" y="104" fill="#fff" font-size="17">ReplayBuffer</text>
+        <text x="50" y="126" fill="#dce9ff" font-size="12">obs, act, next_obs, r, done</text>
+
+        <rect x="280" y="40" width="240" height="110" rx="10" fill="#1f4b58" stroke="#70dfff"/>
+        <text x="300" y="76" fill="#fff" font-size="17">update_critic()</text>
+        <text x="300" y="98" fill="#ddf7ff" font-size="12">target_actor 采样 next_action</text>
+        <text x="300" y="116" fill="#ddf7ff" font-size="12">分布投影 + BCE + 熵正则</text>
+
+        <rect x="580" y="40" width="240" height="110" rx="10" fill="#4f2b48" stroke="#f3a4ff"/>
+        <text x="600" y="76" fill="#fff" font-size="17">VectorCritic 更新</text>
+        <text x="600" y="98" fill="#ffdfff" font-size="12">Q1/Q2 分布 (101 atoms)</text>
+        <text x="600" y="116" fill="#ffdfff" font-size="12">soft_update(tau)</text>
+
+        <rect x="280" y="220" width="240" height="110" rx="10" fill="#244d43" stroke="#69f3cb"/>
+        <text x="300" y="256" fill="#fff" font-size="17">update_actor()</text>
+        <text x="300" y="278" fill="#e1fff5" font-size="12">DiffPol.sample_action()</text>
+        <text x="300" y="296" fill="#e1fff5" font-size="12">最小Q + 运行/随机/终端成本</text>
+
+        <rect x="580" y="220" width="240" height="110" rx="10" fill="#3d3f20" stroke="#f5f090"/>
+        <text x="600" y="256" fill="#fff" font-size="17">温度系数 alpha 更新</text>
+        <text x="600" y="278" fill="#fff9d5" font-size="12">EntropyCoef / ConstantEntropyCoef</text>
+        <text x="600" y="296" fill="#fff9d5" font-size="12">target_entropy = act_dim * 4</text>
+
+        <rect x="910" y="130" width="300" height="220" rx="10" fill="#25306c" stroke="#9db3ff"/>
+        <text x="930" y="168" fill="#fff" font-size="18">DIME._train() (jit loop)</text>
+        <text x="930" y="196" fill="#dce7ff" font-size="13">for i in gradient_steps:</text>
+        <text x="930" y="219" fill="#dce7ff" font-size="13">1) update_critic</text>
+        <text x="930" y="242" fill="#dce7ff" font-size="13">2) 若命中 policy_delay -> update_actor</text>
+        <text x="930" y="265" fill="#dce7ff" font-size="13">3) update_temperature</text>
+        <text x="930" y="288" fill="#dce7ff" font-size="13">4) soft_update_target_actor(policy_tau)</text>
+        <text x="930" y="311" fill="#dce7ff" font-size="13">5) 返回日志指标</text>
+
+        <line x1="220" y1="110" x2="280" y2="95" stroke="#80f0d0" stroke-width="2.5" marker-end="url(#arrow2)"/>
+        <line x1="520" y1="95" x2="580" y2="95" stroke="#80f0d0" stroke-width="2.5" marker-end="url(#arrow2)"/>
+        <line x1="220" y1="110" x2="280" y2="275" stroke="#80f0d0" stroke-width="2.5" marker-end="url(#arrow2)"/>
+        <line x1="520" y1="275" x2="580" y2="275" stroke="#80f0d0" stroke-width="2.5" marker-end="url(#arrow2)"/>
+        <line x1="820" y1="95" x2="910" y2="180" stroke="#80f0d0" stroke-width="2.5" marker-end="url(#arrow2)"/>
+        <line x1="820" y1="275" x2="910" y2="300" stroke="#80f0d0" stroke-width="2.5" marker-end="url(#arrow2)"/>
+      </svg>
+      <div class="code">关键函数：<span class="mono">DIME.train()</span>、<span class="mono">DIME._train()</span>、<span class="mono">DIME.update_critic()</span>、<span class="mono">DIME.update_actor()</span></div>
+    </section>
+
+    <section class="panel" id="actor">
+      <div class="hint">模型结构1：Diffusion Actor（DIS + PISGRADNet）详细结构。</div>
+      <svg viewBox="0 0 1280 740" aria-label="Actor 模型结构图">
+        <defs>
+          <marker id="arrow3" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#6fd3ff"></polygon>
+          </marker>
+        </defs>
+
+        <rect x="30" y="40" width="220" height="100" rx="10" fill="#2b3f79" stroke="#8cb3ff"/>
+        <text x="50" y="76" fill="#fff" font-size="18">输入观测 obs</text>
+        <text x="50" y="100" fill="#dbe8ff" font-size="13">shape: [B, obs_dim]</text>
+
+        <rect x="30" y="190" width="220" height="120" rx="10" fill="#2d4f64" stroke="#76deff"/>
+        <text x="50" y="228" fill="#fff" font-size="18">先验噪声 x_0</text>
+        <text x="50" y="252" fill="#dcf8ff" font-size="13">N(0, init_std^2 I)</text>
+        <text x="50" y="274" fill="#dcf8ff" font-size="13">默认 init_std=2.5</text>
+
+        <rect x="300" y="95" width="350" height="250" rx="10" fill="#193d4a" stroke="#6ce8ff"/>
+        <text x="320" y="132" fill="#fff" font-size="20">PISGRADNet (score model)</text>
+        <text x="320" y="160" fill="#ddfaff" font-size="13">time Fourier features: sin/cos(coeff*t + phase)</text>
+        <text x="320" y="182" fill="#ddfaff" font-size="13">time_coder_state: Dense -> GELU -> Dense</text>
+        <text x="320" y="204" fill="#ddfaff" font-size="13">concat(x_t, obs, t_embed) -> state_time_net</text>
+        <text x="320" y="226" fill="#ddfaff" font-size="13">state_time_net: 3 x [Dense(256)+GELU] -> Dense(dim)</text>
+        <text x="320" y="248" fill="#ddfaff" font-size="13">可选: + time_coder_grad * target_score</text>
+        <text x="320" y="270" fill="#ddfaff" font-size="13">输出: score 修正项 s_theta(x_t, obs, t)</text>
+        <text x="320" y="292" fill="#ddfaff" font-size="13">默认: use_target_score=False</text>
+
+        <rect x="710" y="95" width="250" height="250" rx="10" fill="#3b2f62" stroke="#b9a7ff"/>
+        <text x="730" y="132" fill="#fff" font-size="20">DIS Integrator (EM)</text>
+        <text x="730" y="160" fill="#eee7ff" font-size="13">dt = softplus(dt_param) * schedule(t)</text>
+        <text x="730" y="182" fill="#eee7ff" font-size="13">sigma^2 = 1 / friction(t)</text>
+        <text x="730" y="204" fill="#eee7ff" font-size="13">eta = dt * sigma^2</text>
+        <text x="730" y="226" fill="#eee7ff" font-size="13">x_(t+1)=x_t+eta*(drift+s_theta)+sqrt(2eta)*eps</text>
+        <text x="730" y="248" fill="#eee7ff" font-size="13">累计 log ratio 计算 running_cost</text>
+        <text x="730" y="270" fill="#eee7ff" font-size="13">迭代步数: diff_steps=16</text>
+        <text x="730" y="292" fill="#eee7ff" font-size="13">最终 action = tanh(x_T)</text>
+
+        <rect x="1010" y="140" width="230" height="140" rx="10" fill="#2d5c35" stroke="#97f5a6"/>
+        <text x="1030" y="176" fill="#fff" font-size="19">输出动作 action</text>
+        <text x="1030" y="200" fill="#e7ffe8" font-size="13">shape: [B, action_dim]</text>
+        <text x="1030" y="222" fill="#e7ffe8" font-size="13">并返回运行成本/终端成本</text>
+
+        <rect x="300" y="395" width="650" height="260" rx="10" fill="#111e41" stroke="#5076d5"/>
+        <text x="322" y="430" fill="#fff" font-size="18">配置映射（默认）</text>
+        <text x="322" y="458" fill="#d5e2ff" font-size="13">sampler.name = dis</text>
+        <text x="322" y="480" fill="#d5e2ff" font-size="13">sampler.integrator = EM</text>
+        <text x="322" y="502" fill="#d5e2ff" font-size="13">alg.actor.diff_steps = 16</text>
+        <text x="322" y="524" fill="#d5e2ff" font-size="13">score_model.num_layers = 3, num_hid = 256</text>
+        <text x="322" y="546" fill="#d5e2ff" font-size="13">score_model.time_coder_out = 256</text>
+        <text x="322" y="568" fill="#d5e2ff" font-size="13">learn_dt = True, learn_friction = True</text>
+        <text x="322" y="590" fill="#d5e2ff" font-size="13">learn_prior = False, learn_betas = False</text>
+        <text x="322" y="612" fill="#d5e2ff" font-size="13">use_target_score = False</text>
+
+        <line x1="250" y1="90" x2="300" y2="140" stroke="#6fd3ff" stroke-width="2.5" marker-end="url(#arrow3)"/>
+        <line x1="250" y1="250" x2="300" y2="230" stroke="#6fd3ff" stroke-width="2.5" marker-end="url(#arrow3)"/>
+        <line x1="650" y1="220" x2="710" y2="220" stroke="#6fd3ff" stroke-width="2.5" marker-end="url(#arrow3)"/>
+        <line x1="960" y1="220" x2="1010" y2="210" stroke="#6fd3ff" stroke-width="2.5" marker-end="url(#arrow3)"/>
+        <line x1="500" y1="345" x2="500" y2="395" stroke="#6fd3ff" stroke-width="2.5" marker-end="url(#arrow3)"/>
+      </svg>
+      <div class="code">对应代码：<span class="mono">diffusion/diffusion_policy.py</span>、<span class="mono">diffusion/od/dis.py</span>、<span class="mono">diffusion/od/od_integrators.py</span>、<span class="mono">diffusion/common/models/pisgrad_net.py</span></div>
+    </section>
+
+    <section class="panel" id="critic">
+      <div class="hint">模型结构2：Distributional Twin Critic（VectorCritic + Critic）详细结构。</div>
+      <svg viewBox="0 0 1280 650" aria-label="Critic 模型结构图">
+        <defs>
+          <marker id="arrow4" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#f0a7ff"></polygon>
+          </marker>
+        </defs>
+
+        <rect x="30" y="80" width="220" height="90" rx="10" fill="#2f4e67" stroke="#8ed6ff"/>
+        <text x="50" y="113" fill="#fff" font-size="18">obs</text>
+        <text x="50" y="136" fill="#e1f7ff" font-size="13">[B, obs_dim]</text>
+
+        <rect x="30" y="220" width="220" height="90" rx="10" fill="#2f4e67" stroke="#8ed6ff"/>
+        <text x="50" y="253" fill="#fff" font-size="18">action</text>
+        <text x="50" y="276" fill="#e1f7ff" font-size="13">[B, action_dim]</text>
+
+        <rect x="300" y="130" width="270" height="140" rx="10" fill="#4e2f56" stroke="#f2a9ff"/>
+        <text x="320" y="165" fill="#fff" font-size="19">Critic 单网络</text>
+        <text x="320" y="188" fill="#ffe2ff" font-size="13">concat(obs, action)</text>
+        <text x="320" y="210" fill="#ffe2ff" font-size="13">Dense(2048)-ReLU-(BN)</text>
+        <text x="320" y="232" fill="#ffe2ff" font-size="13">Dense(2048)-ReLU-(BN)</text>
+        <text x="320" y="254" fill="#ffe2ff" font-size="13">Dense(101) -> softmax</text>
+
+        <rect x="640" y="100" width="290" height="210" rx="10" fill="#40315f" stroke="#c5b2ff"/>
+        <text x="660" y="136" fill="#fff" font-size="19">VectorCritic (nn.vmap)</text>
+        <text x="660" y="159" fill="#efe8ff" font-size="13">n_critics = 2（默认）</text>
+        <text x="660" y="181" fill="#efe8ff" font-size="13">并行得到 Q1_dist, Q2_dist</text>
+        <text x="660" y="203" fill="#efe8ff" font-size="13">输出 shape: [2, B, 101]</text>
+        <text x="660" y="225" fill="#efe8ff" font-size="13">z_atoms = linspace(v_min, v_max, 101)</text>
+        <text x="660" y="247" fill="#efe8ff" font-size="13">Q = sum(prob * z_atoms)</text>
+        <text x="660" y="269" fill="#efe8ff" font-size="13">损失: 分布投影 + 交叉熵 + 熵项</text>
+
+        <rect x="990" y="150" width="240" height="120" rx="10" fill="#325e32" stroke="#9cf19c"/>
+        <text x="1010" y="186" fill="#fff" font-size="18">Actor / Critic 训练信号</text>
+        <text x="1010" y="209" fill="#e6ffe6" font-size="13">min(Q1, Q2) 用于 actor 更新</text>
+        <text x="1010" y="231" fill="#e6ffe6" font-size="13">target 分布用于 critic 更新</text>
+
+        <rect x="300" y="360" width="930" height="220" rx="10" fill="#111e41" stroke="#567ed8"/>
+        <text x="322" y="394" fill="#fff" font-size="18">关键超参数（默认）</text>
+        <text x="322" y="421" fill="#d9e5ff" font-size="13">alg.critic.hs = [2048, 2048]</text>
+        <text x="322" y="443" fill="#d9e5ff" font-size="13">alg.critic.n_critics = 2</text>
+        <text x="322" y="465" fill="#d9e5ff" font-size="13">alg.critic.n_atoms = 101</text>
+        <text x="322" y="487" fill="#d9e5ff" font-size="13">alg.critic.v_min = -200, v_max = 200</text>
+        <text x="322" y="509" fill="#d9e5ff" font-size="13">alg.optimizer.bn = True, bn_mode = brn_actor</text>
+        <text x="322" y="531" fill="#d9e5ff" font-size="13">optimizer: Adam(lr_critic=3e-4, b1=0.5)</text>
+        <text x="322" y="553" fill="#d9e5ff" font-size="13">actor loss 使用 ent_coef * (run_cost + sto_cost + terminal_cost)</text>
+
+        <line x1="250" y1="125" x2="300" y2="170" stroke="#f0a7ff" stroke-width="2.5" marker-end="url(#arrow4)"/>
+        <line x1="250" y1="265" x2="300" y2="230" stroke="#f0a7ff" stroke-width="2.5" marker-end="url(#arrow4)"/>
+        <line x1="570" y1="200" x2="640" y2="200" stroke="#f0a7ff" stroke-width="2.5" marker-end="url(#arrow4)"/>
+        <line x1="930" y1="205" x2="990" y2="205" stroke="#f0a7ff" stroke-width="2.5" marker-end="url(#arrow4)"/>
+      </svg>
+      <div class="code">对应代码：<span class="mono">models/critic.py</span>、<span class="mono">diffusion/dime.py::update_critic</span>、<span class="mono">diffusion/dime.py::update_actor</span></div>
+    </section>
+
+    <section class="footer">
+      文件来源：`run_dime.py`、`diffusion/dime.py`、`diffusion/diffusion_policy.py`、`diffusion/od/*`、`models/critic.py`、`configs/*`。<br />
+      建议打开方式：在 `diffusion-rl/DIME` 目录执行 <span class="mono">python -m http.server 8000</span>，浏览器访问 <span class="mono">http://localhost:8000/dime_architecture_visualization.html</span>。
+    </section>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll(".tab");
+    const panels = document.querySelectorAll(".panel");
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => t.classList.remove("active"));
+        panels.forEach((p) => p.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.tab).classList.add("active");
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 import warnings
+import re
 
 from stable_baselines3.common.callbacks import EventCallback, BaseCallback
 from typing import Any, Dict, Optional, Union
@@ -85,6 +86,7 @@ class EvalCallback(EventCallback):
         self._is_success_buffer = []
         self._per_time_is_success_buffer = []
         self.evaluations_successes = []
+        self.best_checkpoint_step: Optional[int] = None
 
         # generate a list of 1M random integers, using a jax random key supplied in the args
         seed_list = jax.random.randint(jax.random.key(jax_random_key_for_seeds), (10000000,), 0, 2 ** 30 - 1)
@@ -200,6 +202,10 @@ class EvalCallback(EventCallback):
             if mean_reward > self.best_mean_reward:
                 if self.verbose >= 1:
                     print("New best mean reward!")
+                if hasattr(self.model, "_save_model") and getattr(self.model, "model_save_path", None):
+                    # Persist a matching best actor/critic msgpack pair.
+                    self.model._save_model()
+                    self.best_checkpoint_step = int(self.num_timesteps)
                 if self.best_model_save_path is not None:
                     self.model.save(os.path.join(self.best_model_save_path, "best_model"))
                 self.best_mean_reward = mean_reward
@@ -207,11 +213,29 @@ class EvalCallback(EventCallback):
                 if self.callback_on_new_best is not None:
                     continue_training = self.callback_on_new_best.on_step()
 
+            # Keep only the checkpoint pair that corresponds to the current best.
+            if self.best_checkpoint_step is not None and getattr(self.model, "model_save_path", None):
+                self._prune_checkpoints(self.model.model_save_path, self.best_checkpoint_step)
+
             # Trigger callback after every evaluation, if needed
             if self.callback is not None:
                 continue_training = continue_training and self._on_event()
 
         return continue_training
+
+    @staticmethod
+    def _prune_checkpoints(checkpoint_dir: str, keep_step: int) -> None:
+        pattern = re.compile(r"^(actor_state|critic_state)_(\d+)\.msgpack$")
+        for filename in os.listdir(checkpoint_dir):
+            file_path = os.path.join(checkpoint_dir, filename)
+            if not os.path.isfile(file_path):
+                continue
+            match = pattern.match(filename)
+            if match is None:
+                continue
+            step = int(match.group(2))
+            if step != keep_step:
+                os.remove(file_path)
 
     def update_child_locals(self, locals_: Dict[str, Any]) -> None:
         """
