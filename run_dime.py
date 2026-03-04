@@ -7,26 +7,22 @@ import omegaconf
 import traceback
 
 from common.buffers import DMCCompatibleDictReplayBuffer
+from common.env_factory import create_env, resolve_env_kwargs
 from diffusion.dime import DIME
 from omegaconf import DictConfig
 from models.utils import is_slurm_job
 from wandb.integration.sb3 import WandbCallback
-from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.callbacks import CallbackList
 from models.actor_critic_evaluation_callback import EvalCallback
 
 
-
 def _create_alg(cfg: DictConfig):
     import gymnasium as gym
-    try:
-        import myosuite
-    except ImportError:
-        print("myosuite not installed")
-        pass
 
-    training_env = gym.make(cfg.env_name)
-    eval_env = make_vec_env(cfg.env_name, n_envs=1, seed=cfg.seed)
+    env_kwargs = resolve_env_kwargs(getattr(cfg, "env_kwargs", None))
+    training_env = create_env(cfg.env_name, env_kwargs=env_kwargs)
+
     env_name_split = cfg.env_name.split('/')
     rb_class = None
     if env_name_split[0] == 'dm_control':
@@ -39,35 +35,39 @@ def _create_alg(cfg: DictConfig):
     model_save_dir = f"./checkpoints/{cfg.wandb['group']}/{cfg.wandb['job_type']}/{run_id}/"
     best_model_dir = f"./best_models/{cfg.wandb['group']}/{cfg.wandb['job_type']}/{run_id}/"
 
-
     model = DIME(
         "MultiInputPolicy" if isinstance(training_env.observation_space, gym.spaces.Dict) else "MlpPolicy",
         env=training_env,
         model_save_path=model_save_dir,
-        save_every_n_steps=0,
+        save_every_n_steps=int(getattr(cfg, "save_every_n_steps", 5000)),
         cfg=cfg,
         tensorboard_log=tensorboard_log_dir,
         replay_buffer_class=rb_class
     )
 
-    # Create log dir where evaluation results will be saved
-    os.makedirs(eval_log_dir, exist_ok=True)
     os.makedirs(model_save_dir, exist_ok=True)
     os.makedirs(best_model_dir, exist_ok=True)
-    # Create callback that evaluates agent
 
-    eval_callback = EvalCallback(
-        eval_env,
-        jax_random_key_for_seeds=cfg.seed,
-        best_model_save_path=best_model_dir,
-        log_path=eval_log_dir,
-        eval_freq=max(300000 // cfg.log_freq, 1),
-        n_eval_episodes=5, deterministic=True, render=False
-    )
-    if cfg.wandb["activate"]:
-        callback_list = CallbackList([eval_callback, WandbCallback(verbose=0, )])
+    callbacks = []
+    eval_enabled = getattr(cfg, "eval_enabled", True)
+    if eval_enabled:
+        eval_env = DummyVecEnv([lambda: create_env(cfg.env_name, env_kwargs=env_kwargs)])
+        os.makedirs(eval_log_dir, exist_ok=True)
+        eval_callback = EvalCallback(
+            eval_env,
+            jax_random_key_for_seeds=cfg.seed,
+            best_model_save_path=best_model_dir,
+            log_path=eval_log_dir,
+            eval_freq=max(300000 // cfg.log_freq, 1),
+            n_eval_episodes=5, deterministic=True, render=False
+        )
+        callbacks.append(eval_callback)
     else:
-        callback_list = CallbackList([eval_callback])
+        print("Eval disabled (eval_enabled=false). Checkpoints will still be saved.")
+
+    if cfg.wandb["activate"]:
+        callbacks.append(WandbCallback(verbose=0))
+    callback_list = CallbackList(callbacks) if len(callbacks) > 0 else None
     return model, callback_list
 
 
@@ -92,6 +92,9 @@ def initialize_and_run(cfg):
             wandb.summary['SLURM_JOB_ID'] = os.environ.get('SLURM_JOB_ID')
     model, callback_list = _create_alg(cfg)
     model.learn(total_timesteps=cfg.tot_time_steps, progress_bar=True, callback=callback_list)
+    if hasattr(model, "_save_model") and getattr(model, "model_save_path", None):
+        model._save_model()
+        print(f"Final checkpoint saved at step {model.num_timesteps}")
 
 
 @hydra.main(version_base=None, config_path="configs", config_name="base")

@@ -2,6 +2,7 @@
 defaults:
   - alg: dime
   - sampler: dis
+  - env: default
   - setup
   - _self_
 
@@ -9,6 +10,7 @@ seed: 0
 use_jit: true
 tot_time_steps: 1e6
 log_freq: 100
+save_every_n_steps: 5000
 step_size: ${alg.optimizer.lr_actor}
 step_size_betas: ${alg.optimizer.lr_actor}
 use_path_gradient: False
@@ -22,5 +24,6 @@ use_step_size_scheduler: False
 warmup: const
 iters: ${tot_time_steps}
 warmup_iters: 60_000
-
-env_name: dm_control/dog-run
+# Environment settings are centralized in configs/env/*.yaml
+# Example:
+#   python run_dime.py env=metadrive

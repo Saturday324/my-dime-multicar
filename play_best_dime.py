@@ -1,10 +1,24 @@
 import argparse
+import json
 import os
 
 import imageio.v2 as imageio
 import numpy as np
 
+from common.env_factory import create_env
 from diffusion.dime import DIME
+
+
+def _is_metadrive_env_name(env_name: str) -> bool:
+    return "metadrive" in env_name.lower()
+
+
+def _render_frame(env, env_name: str, render_mode: str):
+    if render_mode != "rgb_array":
+        return None
+    if _is_metadrive_env_name(env_name):
+        return env.render(mode="top_down", window=False, screen_size=(1000, 1000), film_size=(1000, 1000))
+    return env.render()
 
 
 def parse_args():
@@ -66,6 +80,12 @@ def parse_args():
         choices=["", "egl", "osmesa", "glfw"],
         help="Optional MuJoCo GL backend override.",
     )
+    parser.add_argument(
+        "--env-kwargs-json",
+        type=str,
+        default="{}",
+        help="Optional JSON dict passed to env constructor.",
+    )
     return parser.parse_args()
 
 
@@ -78,12 +98,17 @@ def main():
         elif args.mujoco_gl == "osmesa":
             os.environ.setdefault("PYOPENGL_PLATFORM", "osmesa")
 
-    import gymnasium as gym
-
     if not os.path.exists(args.best_model_path):
         raise FileNotFoundError(f"best model not found: {args.best_model_path}")
 
-    env = gym.make(args.env_name, render_mode=args.render_mode)
+    try:
+        env_kwargs = json.loads(args.env_kwargs_json)
+    except json.JSONDecodeError as ex:
+        raise ValueError(f"Invalid --env-kwargs-json: {args.env_kwargs_json}") from ex
+    if not isinstance(env_kwargs, dict):
+        raise ValueError("--env-kwargs-json must decode to a JSON object.")
+
+    env = create_env(args.env_name, env_kwargs=env_kwargs, render_mode=args.render_mode)
     model = DIME.load(args.best_model_path, env=env)
 
     print(f"Loaded model: {args.best_model_path}")
@@ -110,7 +135,7 @@ def main():
                 done = True
 
             if args.render_mode == "rgb_array":
-                frame = env.render()
+                frame = _render_frame(env, args.env_name, args.render_mode)
                 if args.video_path is not None and ep == 0 and frame is not None:
                     frames.append(np.asarray(frame))
 
@@ -136,7 +161,7 @@ if __name__ == "__main__":
     main()
 """
 xvfb-run -s "-screen 0 1280x720x24" python play_best_dime.py \
-  --best-model-path "./best_models/DIME_MountainCarContinuous-v0/lr0.0003/seed=0_start=20260303-000000/best_model.zip" \
+  --best-model-path "./best_models/DIME_MountainCarContinuous-v0/lr0.0003/seed=0_start=20260303-021156/best_model.zip" \
   --env-name MountainCarContinuous-v0 \
   --episodes 1 \
   --deterministic \

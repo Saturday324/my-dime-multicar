@@ -6,7 +6,20 @@ import numpy as np
 from hydra import compose, initialize_config_dir
 
 from common.buffers import DMCCompatibleDictReplayBuffer
+from common.env_factory import create_env, resolve_env_kwargs
 from diffusion.dime import DIME
+
+
+def _is_metadrive_env_name(env_name: str) -> bool:
+    return "metadrive" in env_name.lower()
+
+
+def _render_frame(env, env_name: str, render_mode: str):
+    if render_mode != "rgb_array":
+        return None
+    if _is_metadrive_env_name(env_name):
+        return env.render(mode="top_down", window=False, screen_size=(1000, 1000), film_size=(1000, 1000))
+    return env.render()
 
 
 def parse_args():
@@ -59,8 +72,8 @@ def resolve_replay_buffer_class(env_name):
 
 def build_model(cfg, render_mode):
     import gymnasium as gym
-
-    env = gym.make(cfg.env_name, render_mode=render_mode)
+    env_kwargs = resolve_env_kwargs(getattr(cfg, "env_kwargs", None))
+    env = create_env(cfg.env_name, env_kwargs=env_kwargs, render_mode=render_mode)
     rb_class = resolve_replay_buffer_class(cfg.env_name)
     model = DIME(
         "MultiInputPolicy" if isinstance(env.observation_space, gym.spaces.Dict) else "MlpPolicy",
@@ -108,7 +121,7 @@ def main():
             ep_len += 1
 
             if args.render_mode == "rgb_array":
-                frame = env.render()
+                frame = _render_frame(env, cfg.env_name, args.render_mode)
                 if args.video_path is not None and ep == 0 and frame is not None:
                     frames.append(np.asarray(frame))
 

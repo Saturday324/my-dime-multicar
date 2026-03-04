@@ -270,12 +270,51 @@ class DIME(OffPolicyAlgorithmJax):
                 self._save_model()
 
         self.logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
+        wandb_payload = {"train/n_updates": self._n_updates}
         for k, v in log_metrics.items():
             try:
                 log_val = v.item()
             except:
                 log_val = v
             self.logger.record(f"train/{k}", log_val)
+            wandb_payload[f"train/{k}"] = log_val
+        self._maybe_log_to_wandb(wandb_payload)
+
+    def _maybe_log_to_wandb(self, payload: Dict[str, Any]) -> None:
+        cfg_wandb = getattr(self.cfg, "wandb", None) if self.cfg is not None else None
+        if cfg_wandb is None:
+            return
+        try:
+            wandb_active = bool(cfg_wandb["activate"])
+        except Exception:
+            wandb_active = False
+        if not wandb_active:
+            return
+
+        log_freq = int(getattr(self.cfg, "log_freq", 100))
+        if log_freq <= 0:
+            log_freq = 1
+        if self.num_timesteps % log_freq != 0:
+            return
+
+        try:
+            import wandb
+        except Exception:
+            return
+        if getattr(wandb, "run", None) is None:
+            return
+
+        cleaned_payload = {}
+        for k, v in payload.items():
+            try:
+                cleaned_payload[k] = float(v)
+            except Exception:
+                try:
+                    cleaned_payload[k] = float(np.asarray(v))
+                except Exception:
+                    continue
+        if len(cleaned_payload) > 0:
+            wandb.log(cleaned_payload, step=int(self.num_timesteps))
 
     @staticmethod
     @partial(jax.jit, static_argnames=["crossq_style", "use_bnstats_from_live_net", "sampler", "num_atoms", "z_atoms",

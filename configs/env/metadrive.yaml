@@ -1,0 +1,24 @@
+#@package _global_
+# Single-agent MetaDrive environment profile.
+env_name: metadrive/MetaDriveEnv
+
+# MetaDrive does not support concurrent env instances in this workflow.
+eval_enabled: false
+
+env_kwargs:
+  # Core scene generation
+  use_render: false
+  start_seed: 0
+  num_scenarios: 1
+  map: 3
+  store_map: true
+
+  # Traffic controls (same fields as metadrive/envs/metadrive_env.py)
+  traffic_density: 0.1
+  need_inverse_traffic: false
+  # Valid values in this MetaDrive version: basic, respawn, trigger, hybrid
+  traffic_mode: trigger
+  random_traffic: false
+
+  # Episode control
+  horizon: 1000

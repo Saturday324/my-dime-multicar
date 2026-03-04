@@ -20,8 +20,8 @@ critic:
   dropout_rate: null # None in yaml
   use_layer_norm: False
   n_atoms: 101
-  v_min: -200
-  v_max: 200
+  v_min: -300
+  v_max: 300
   entr_coeff: 0.005
 
 optimizer:
