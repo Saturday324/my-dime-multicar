@@ -1,0 +1,17 @@
+#@package _global_
+# Multi-agent bidirection profile.
+env_name: metadrive/MultiAgentBidirectionEnv
+eval_enabled: false
+
+env_kwargs:
+  use_render: false
+  start_seed: 0
+  num_scenarios: 1
+  horizon: 1000
+
+  num_agents: 8
+  allow_respawn: false
+  use_lateral: false
+
+  traffic_density: 0.0
+  random_traffic: false

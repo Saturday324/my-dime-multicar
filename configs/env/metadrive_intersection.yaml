@@ -1,0 +1,26 @@
+#@package _global_
+# Single-agent MetaDrive profile focused on intersection blocks.
+env_name: metadrive/MetaDriveEnv
+eval_enabled: false
+
+env_kwargs:
+  use_render: false
+  start_seed: 0
+  num_scenarios: 10
+  # "X" is the intersection block ID in PG maps.
+  map: X
+  store_map: true
+
+  traffic_density: 0.1
+  need_inverse_traffic: false
+  traffic_mode: trigger
+  random_traffic: false
+  horizon: 1000
+
+  # S：直道 (Straight)
+# C：弯道 (Curve)
+# X：十字路口 (InterSection)
+# O：环岛 (Roundabout)
+# T：T 字路口 (TInterSection)
+# U：带 U-turn 的路口 (InterSectionWithUTurn)
+# r / R：匝道 (InRampOnStraight / OutRampOnStraight)

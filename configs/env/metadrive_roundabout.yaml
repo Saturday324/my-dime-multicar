@@ -1,0 +1,18 @@
+#@package _global_
+# Single-agent MetaDrive profile focused on roundabout blocks.
+env_name: metadrive/MetaDriveEnv
+eval_enabled: false
+
+env_kwargs:
+  use_render: false
+  start_seed: 0
+  num_scenarios: 10
+  # "O" is the roundabout block ID in PG maps.
+  map: O
+  store_map: true
+
+  traffic_density: 0.3
+  need_inverse_traffic: false
+  traffic_mode: trigger
+  random_traffic: false
+  horizon: 1000

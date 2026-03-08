@@ -15,6 +15,7 @@ MABidirectionConfig = dict(
     top_down_camera_initial_x=95,
     top_down_camera_initial_y=15,
     top_down_camera_initial_z=120,
+    use_lateral=False,
     cross_yellow_line_done=True,
     vehicle_config={
         "show_lidar": False,

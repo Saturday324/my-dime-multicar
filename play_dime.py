@@ -36,7 +36,12 @@ def parse_args():
         choices=["human", "rgb_array"],
         help="Environment render mode.",
     )
-    parser.add_argument("--video-path", type=str, default=None, help="Optional mp4 path to save first episode.")
+    parser.add_argument(
+        "--video-path",
+        type=str,
+        default=None,
+        help="Optional mp4 path. If episodes>1, saves one file per episode with _epN suffix.",
+    )
     parser.add_argument(
         "--deterministic",
         action="store_true",
@@ -107,8 +112,14 @@ def main():
     print("Loaded critic step:", critic_step)
     print("Deterministic:", bool(args.deterministic))
 
-    frames = []
+    imageio = None
+    if args.video_path is not None:
+        if args.render_mode != "rgb_array":
+            raise ValueError("Saving video requires --render-mode rgb_array.")
+        import imageio.v2 as imageio
+
     for ep in range(args.episodes):
+        frames = []
         obs, _ = env.reset(seed=cfg.seed + ep)
         done = False
         ep_reward = 0.0
@@ -122,23 +133,30 @@ def main():
 
             if args.render_mode == "rgb_array":
                 frame = _render_frame(env, cfg.env_name, args.render_mode)
-                if args.video_path is not None and ep == 0 and frame is not None:
+                if args.video_path is not None and frame is not None:
                     frames.append(np.asarray(frame))
 
         print(f"Episode {ep + 1}: reward={ep_reward:.3f}, length={ep_len}")
 
+        if args.video_path is not None:
+            if len(frames) == 0:
+                raise RuntimeError(
+                    f"No frames were captured for episode {ep + 1}. Use --render-mode rgb_array when saving video."
+                )
+
+            root, ext = os.path.splitext(args.video_path)
+            if not ext:
+                ext = ".mp4"
+            if args.episodes > 1:
+                episode_video_path = f"{root}_ep{ep + 1}{ext}"
+            else:
+                episode_video_path = f"{root}{ext}"
+
+            os.makedirs(os.path.dirname(episode_video_path) or ".", exist_ok=True)
+            imageio.mimsave(episode_video_path, frames, fps=30)
+            print(f"Saved video to: {episode_video_path}")
+
     env.close()
-
-    if args.video_path is not None:
-        if len(frames) == 0:
-            raise RuntimeError(
-                "No frames were captured. Use --render-mode rgb_array when saving video."
-            )
-        import imageio.v2 as imageio
-
-        os.makedirs(os.path.dirname(args.video_path) or ".", exist_ok=True)
-        imageio.mimsave(args.video_path, frames, fps=30)
-        print(f"Saved video to: {args.video_path}")
 
 
 if __name__ == "__main__":
