@@ -1,0 +1,80 @@
+myosuite not installed, skipping
+[2026-03-08 10:26:46,654][OpenGL.acceleratesupport][INFO] - No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate'
+[2026-03-08 10:26:46,660][OpenGL.platform.ctypesloader][INFO] - Failed to load library ( 'libOpenGL.so.0' ): libOpenGL.so.0: cannot open shared object file: No such file or directory
+Loaded metadrive from local clone: /workspace/diffusion-rl/DIME/metadrive
+[38;20m[INFO] Environment: MultiAgentRoundaboutEnv[0m
+[38;20m[INFO] MetaDrive version: 0.4.3[0m
+[38;20m[INFO] Sensors: [lidar: Lidar(), side_detector: SideDetector(), lane_line_detector: LaneLineDetector()][0m
+[38;20m[INFO] Render Mode: none[0m
+[38;20m[INFO] Horizon (Max steps per agent): 1000[0m
+[33;20m[WARNING] When reaching max steps, both 'terminate' and 'truncate will be True.Generally, only the `truncate` should be `True`. (base_env.py:395)[0m
+[2026-03-08 10:26:48,876][jax._src.xla_bridge][INFO] - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+[2026-03-08 10:26:48,877][jax._src.xla_bridge][INFO] - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+[38;20m[INFO] Assets version: 0.4.3[0m
+[38;20m[INFO] Known Pipes: glxGraphicsPipe[0m
+[38;20m[INFO] Start Scenario Index: 0, Num Scenarios : 1[0m
+env_steps:   0%|▏                               | 4999/1000000 [00:22<1:09:36, 238.23step/s]/opt/conda/envs/dime/lib/python3.11/site-packages/jax/_src/linear_util.py:193: DeprecationWarning: Passing arguments 'a', 'a_min' or 'a_max' to jax.numpy.clip is deprecated. Please use 'arr', 'min' or 'max' respectively instead.
+  ans = self.f(*args, **dict(self.params, **kwargs))
+[34m[1mwandb[0m: [33mWARNING[0m Step cannot be set when using tensorboard syncing. Please use `run.define_metric(...)` to define a custom metric to log your step values.
+env_steps:  22%|██████▎                      | 219761/1000000 [1:13:54<4:22:24, 49.55step/s]
+Traceback (most recent call last):
+  File "/workspace/diffusion-rl/DIME/run_multiagent_dime.py", line 299, in <module>
+    main()
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/main.py", line 94, in decorated_main
+    _run_hydra(
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/utils.py", line 394, in _run_hydra
+    _run_app(
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/utils.py", line 457, in _run_app
+    run_and_report(
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/utils.py", line 220, in run_and_report
+    return func()
+           ^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/utils.py", line 458, in <lambda>
+    lambda: hydra.run(
+            ^^^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/hydra.py", line 119, in run
+    ret = run_job(
+          ^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/core/utils.py", line 186, in run_job
+    ret.return_value = task_function(task_cfg)
+                       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/run_multiagent_dime.py", line 280, in main
+    initialize_and_run(cfg)
+  File "/workspace/diffusion-rl/DIME/run_multiagent_dime.py", line 264, in initialize_and_run
+    _train_multiagent(model, env, cfg)
+  File "/workspace/diffusion-rl/DIME/run_multiagent_dime.py", line 179, in _train_multiagent
+    next_obs_dict, reward_dict, terminated_dict, truncated_dict, info_dict = env.step(actions)
+                                                                             ^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/envs/marl_envs/multi_agent_metadrive.py", line 131, in step
+    o, r, tm, tc, i = super(MultiAgentMetaDrive, self).step(actions)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/envs/base_env.py", line 437, in step
+    engine_info = self._step_simulator(actions)  # step the simulation
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/envs/base_env.py", line 468, in _step_simulator
+    scene_manager_after_step_infos = self.engine.after_step()
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/engine/base_engine.py", line 472, in after_step
+    new_step_info = manager.after_step(*args, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/manager/base_manager.py", line 309, in after_step
+    step_infos.update(self.for_each_active_agents(lambda v: v.after_step()))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/manager/base_manager.py", line 402, in for_each_active_agents
+    ret[k] = func(v, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/manager/base_manager.py", line 309, in <lambda>
+    step_infos.update(self.for_each_active_agents(lambda v: v.after_step()))
+                                                            ^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/component/vehicle/base_vehicle.py", line 235, in after_step
+    self.navigation.update_localization(self)
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/component/navigation_module/node_network_navigation.py", line 192, in update_localization
+    self._navi_info[:half], lanes_heading1, next_checkpoint = self._get_info_for_checkpoint(
+                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/component/navigation_module/node_network_navigation.py", line 306, in _get_info_for_checkpoint
+    dir_norm = norm(dir_vec[0], dir_vec[1])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/utils/math.py", line 49, in norm
+    def norm(x, y):
+
+KeyboardInterrupt

@@ -1,0 +1,105 @@
+alg:
+  tau: 1.0
+  policy_tau: 1.0
+  utd: 2
+  gamma: 0.99
+  policy_delay: 3
+  batch_size: 256
+  buffer_size: 1000000
+  learning_starts: 5000
+  reset_models: false
+  ent_coef:
+    type: auto
+    init: 1.0
+    target: 6.0
+  critic:
+    activation: relu
+    n_critics: 2
+    hs:
+    - 2048
+    - 2048
+    dropout_rate: null
+    use_layer_norm: false
+    n_atoms: 101
+    v_min: -300
+    v_max: 300
+    entr_coeff: 0.005
+  optimizer:
+    bn: true
+    bn_momentum: 0.99
+    bn_mode: brn_actor
+    bn_warmup: 100000
+    lr_critic: 0.0003
+    lr_actor: 0.0003
+    b1: 0.5
+    do_actor_grad_clip: true
+    actor_grad_clip: 1.0
+  actor:
+    diff_steps: 16
+sampler:
+  score_model:
+    use_target_score: ${use_target_score}
+    num_layers: 3
+    num_hid: 256
+    outer_clip: 10000.0
+    inner_clip: 100.0
+    weight_init: 1.0e-08
+    bias_init: 0.0
+    layer_norm: false
+    time_coder_out: ${sampler.score_model.num_hid}
+  dt_schedule:
+    _target_: diffusion.common.scheduler.get_cosine_schedule
+    total_steps: ${alg.actor.diff_steps}
+    min: 0.001
+    s: 0.008
+    pow: 2
+  name: dis
+  underdamped: false
+  integrator: EM
+  init_std: 2.5
+  friction: 1.0
+  learn_prior: false
+  learn_betas: false
+  learn_friction: true
+  learn_mass_matrix: false
+env_name: metadrive/MultiAgentRoundaboutEnv
+eval_enabled: false
+env_kwargs:
+  use_render: false
+  start_seed: 0
+  num_scenarios: 1
+  horizon: 1000
+  num_agents: 8
+  allow_respawn: false
+  traffic_density: 0.0
+  random_traffic: false
+  need_inverse_traffic: false
+  traffic_mode: trigger
+  vehicle_config:
+    lidar:
+      num_lasers: 240
+      num_others: 0
+      distance: 50
+wandb:
+  entity: null
+  group: DIME_${env_name}
+  project: DIME
+  job_type: lr${alg.optimizer.lr_actor}
+  activate: false
+seed: 0
+use_jit: true
+tot_time_steps: 20
+log_freq: 100
+save_every_n_steps: 5000
+step_size: ${alg.optimizer.lr_actor}
+step_size_betas: ${alg.optimizer.lr_actor}
+use_path_gradient: false
+use_target_score: false
+dt: 0.1
+learn_dt: true
+per_step_dt: false
+per_dim_friction: true
+use_step_size_scheduler: false
+warmup: const
+iters: ${tot_time_steps}
+warmup_iters: 60000

@@ -1,0 +1,80 @@
+myosuite not installed, skipping
+[2026-03-03 09:30:35,600][OpenGL.acceleratesupport][INFO] - No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate'
+[2026-03-03 09:30:35,607][OpenGL.platform.ctypesloader][INFO] - Failed to load library ( 'libOpenGL.so.0' ): libOpenGL.so.0: cannot open shared object file: No such file or directory
+Loaded metadrive from local clone: /workspace/diffusion-rl/DIME/metadrive
+[38;20m[INFO] Environment: MetaDriveEnv[0m
+[38;20m[INFO] MetaDrive version: 0.4.3[0m
+[38;20m[INFO] Sensors: [lidar: Lidar(), side_detector: SideDetector(), lane_line_detector: LaneLineDetector()][0m
+[38;20m[INFO] Render Mode: none[0m
+[38;20m[INFO] Horizon (Max steps per agent): 1000[0m
+[2026-03-03 09:30:37,304][jax._src.xla_bridge][INFO] - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+[2026-03-03 09:30:37,305][jax._src.xla_bridge][INFO] - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+Eval disabled (eval_enabled=false). Checkpoints will still be saved.
+[38;20m[INFO] Assets version: 0.4.3[0m
+[38;20m[INFO] Known Pipes: glxGraphicsPipe[0m
+[38;20m[INFO] Start Scenario Index: 0, Num Scenarios : 1[0m
+-- exception occured. traceback :
+  File "/workspace/diffusion-rl/DIME/run_dime.py", line 105, in main
+    initialize_and_run(cfg)
+  File "/workspace/diffusion-rl/DIME/run_dime.py", line 94, in initialize_and_run
+    model.learn(total_timesteps=cfg.tot_time_steps, progress_bar=True, callback=callback_list)
+  File "/workspace/diffusion-rl/DIME/diffusion/dime.py", line 199, in learn
+    return super().learn(
+           ^^^^^^^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/stable_baselines3/common/off_policy_algorithm.py", line 301, in learn
+    total_timesteps, callback = self._setup_learn(
+                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/stable_baselines3/common/off_policy_algorithm.py", line 284, in _setup_learn
+    return super()._setup_learn(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/stable_baselines3/common/base_class.py", line 424, in _setup_learn
+    self._last_obs = self.env.reset()  # type: ignore[assignment]
+                     ^^^^^^^^^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 76, in reset
+    obs, self.reset_infos[env_idx] = self.envs[env_idx].reset(seed=self._seeds[env_idx])
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/stable_baselines3/common/monitor.py", line 83, in reset
+    return self.env.reset(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/envs/base_env.py", line 532, in reset
+    reset_info = self.engine.reset()
+                 ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/engine/base_engine.py", line 365, in reset
+    new_step_infos = manager.reset()
+                     ^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/manager/traffic_manager.py", line 77, in reset
+    raise ValueError(f"No such mode named {self.mode}")
+No such mode named Trigger
+--------------------------------
+Traceback (most recent call last):
+  File "/workspace/diffusion-rl/DIME/run_dime.py", line 105, in main
+    initialize_and_run(cfg)
+  File "/workspace/diffusion-rl/DIME/run_dime.py", line 94, in initialize_and_run
+    model.learn(total_timesteps=cfg.tot_time_steps, progress_bar=True, callback=callback_list)
+  File "/workspace/diffusion-rl/DIME/diffusion/dime.py", line 199, in learn
+    return super().learn(
+           ^^^^^^^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/stable_baselines3/common/off_policy_algorithm.py", line 301, in learn
+    total_timesteps, callback = self._setup_learn(
+                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/stable_baselines3/common/off_policy_algorithm.py", line 284, in _setup_learn
+    return super()._setup_learn(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/stable_baselines3/common/base_class.py", line 424, in _setup_learn
+    self._last_obs = self.env.reset()  # type: ignore[assignment]
+                     ^^^^^^^^^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 76, in reset
+    obs, self.reset_infos[env_idx] = self.envs[env_idx].reset(seed=self._seeds[env_idx])
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/stable_baselines3/common/monitor.py", line 83, in reset
+    return self.env.reset(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/envs/base_env.py", line 532, in reset
+    reset_info = self.engine.reset()
+                 ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/engine/base_engine.py", line 365, in reset
+    new_step_infos = manager.reset()
+                     ^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/manager/traffic_manager.py", line 77, in reset
+    raise ValueError(f"No such mode named {self.mode}")
+ValueError: No such mode named Trigger

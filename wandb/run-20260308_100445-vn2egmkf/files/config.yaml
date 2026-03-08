@@ -1,0 +1,190 @@
+_wandb:
+    value:
+        cli_version: 0.25.0
+        e:
+            4b4eweat7djp2mlb768dx92hc5uox1su:
+                args:
+                    - env=metadrive_ma_roundabout
+                    - tot_time_steps=1000000
+                codePath: run_multiagent_dime.py
+                codePathLocal: run_multiagent_dime.py
+                cpu_count: 96
+                cpu_count_logical: 192
+                cudaVersion: "12.8"
+                disk:
+                    /:
+                        total: "1081705279488"
+                        used: "469205815296"
+                email: 2450308086@qq.com
+                executable: /opt/conda/envs/dime/bin/python
+                git:
+                    commit: ab25b2d1614abdec2a486a8724871ed0f298ff87
+                    remote: https://github.com/ALRhub/DIME.git
+                gpu: NVIDIA H20-3e
+                gpu_count: 2
+                gpu_nvidia:
+                    - architecture: Hopper
+                      cudaCores: 9984
+                      memoryTotal: "150754820096"
+                      name: NVIDIA H20-3e
+                      uuid: GPU-7dc54df2-c1ea-b286-65f7-ed9fd4ba7d24
+                    - architecture: Hopper
+                      cudaCores: 9984
+                      memoryTotal: "150754820096"
+                      name: NVIDIA H20-3e
+                      uuid: GPU-d5a64840-4d24-bc78-ece5-2d354e23a2c7
+                host: diffusion-onlinerl-lys-0
+                memory:
+                    total: "2163314601984"
+                os: Linux-5.10.134-16.3.al8.x86_64-x86_64-with-glibc2.35
+                program: /workspace/diffusion-rl/DIME/run_multiagent_dime.py
+                python: CPython 3.11.14
+                root: /workspace/diffusion-rl/DIME
+                startedAt: "2026-03-08T10:04:45.489902Z"
+                writerId: 4b4eweat7djp2mlb768dx92hc5uox1su
+        m: []
+        python_version: 3.11.14
+        t:
+            "1":
+                - 1
+                - 12
+                - 45
+                - 50
+            "2":
+                - 1
+                - 12
+                - 45
+                - 50
+            "3":
+                - 13
+                - 16
+                - 35
+                - 41
+                - 61
+            "4": 3.11.14
+            "5": 0.25.0
+            "12": 0.25.0
+            "13": linux-x86_64
+alg:
+    value:
+        actor:
+            diff_steps: 16
+        batch_size: 256
+        buffer_size: 1000000
+        critic:
+            activation: relu
+            dropout_rate: null
+            entr_coeff: 0.005
+            hs:
+                - 2048
+                - 2048
+            n_atoms: 101
+            n_critics: 2
+            use_layer_norm: false
+            v_max: 300
+            v_min: -300
+        ent_coef:
+            init: 1
+            target: 6
+            type: auto
+        gamma: 0.99
+        learning_starts: 5000
+        optimizer:
+            actor_grad_clip: 1
+            b1: 0.5
+            bn: true
+            bn_mode: brn_actor
+            bn_momentum: 0.99
+            bn_warmup: 100000
+            do_actor_grad_clip: true
+            lr_actor: 0.0003
+            lr_critic: 0.0003
+        policy_delay: 3
+        policy_tau: 1
+        reset_models: false
+        tau: 1
+        utd: 2
+dt:
+    value: 0.1
+env_kwargs:
+    value:
+        allow_respawn: false
+        horizon: 1000
+        need_inverse_traffic: false
+        num_agents: 8
+        num_scenarios: 1
+        random_traffic: false
+        start_seed: 0
+        traffic_density: 0
+        traffic_mode: trigger
+        use_render: false
+        vehicle_config:
+            lidar:
+                distance: 50
+                num_lasers: 240
+                num_others: 0
+env_name:
+    value: metadrive/MultiAgentRoundaboutEnv
+eval_enabled:
+    value: false
+iters:
+    value: 1000000
+learn_dt:
+    value: true
+log_freq:
+    value: 100
+per_dim_friction:
+    value: true
+per_step_dt:
+    value: false
+sampler:
+    value:
+        dt_schedule: diffusion.common.scheduler.get_cosine_schedule.<locals>.cosine_schedule
+        friction: 1
+        init_std: 2.5
+        integrator: EM
+        learn_betas: false
+        learn_friction: true
+        learn_mass_matrix: false
+        learn_prior: false
+        name: dis
+        score_model:
+            bias_init: 0
+            inner_clip: 100
+            layer_norm: false
+            num_hid: 256
+            num_layers: 3
+            outer_clip: 10000
+            time_coder_out: 256
+            use_target_score: false
+            weight_init: 1e-08
+        underdamped: false
+save_every_n_steps:
+    value: 5000
+seed:
+    value: 0
+step_size:
+    value: 0.0003
+step_size_betas:
+    value: 0.0003
+tot_time_steps:
+    value: 1000000
+use_jit:
+    value: true
+use_path_gradient:
+    value: false
+use_step_size_scheduler:
+    value: false
+use_target_score:
+    value: false
+wandb:
+    value:
+        activate: true
+        entity: null
+        group: DIME_metadrive/MultiAgentRoundaboutEnv
+        job_type: lr0.0003
+        project: DIME
+warmup:
+    value: const
+warmup_iters:
+    value: 60000

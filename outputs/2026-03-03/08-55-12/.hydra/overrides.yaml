@@ -1,0 +1,4 @@
+- env_name=MetaDrive-validation-v0
+- eval_enabled=false
+- wandb.activate=false
+- tot_time_steps=200000

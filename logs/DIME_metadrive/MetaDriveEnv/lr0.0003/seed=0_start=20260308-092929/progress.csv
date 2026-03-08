@@ -1,0 +1,3 @@
+time/total_timesteps,rollout/active_agents,rollout/env_steps
+100,4,25
+200,4,50

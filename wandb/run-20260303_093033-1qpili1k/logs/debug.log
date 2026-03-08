@@ -1,0 +1,24 @@
+2026-03-03 09:30:33,120 INFO    MainThread:10407 [wandb_setup.py:_flush():81] Current SDK version is 0.25.0
+2026-03-03 09:30:33,120 INFO    MainThread:10407 [wandb_setup.py:_flush():81] Configure stats pid to 10407
+2026-03-03 09:30:33,120 INFO    MainThread:10407 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-03-03 09:30:33,121 INFO    MainThread:10407 [wandb_init.py:setup_run_log_directory():717] Logging user logs to /workspace/diffusion-rl/DIME/wandb/run-20260303_093033-1qpili1k/logs/debug.log
+2026-03-03 09:30:33,122 INFO    MainThread:10407 [wandb_init.py:setup_run_log_directory():718] Logging internal logs to /workspace/diffusion-rl/DIME/wandb/run-20260303_093033-1qpili1k/logs/debug-internal.log
+2026-03-03 09:30:33,123 INFO    MainThread:10407 [wandb_init.py:init():844] calling init triggers
+2026-03-03 09:30:33,124 INFO    MainThread:10407 [wandb_init.py:init():849] wandb.init called with sweep_config: {}
+config: {'alg': {'tau': 1.0, 'policy_tau': 1.0, 'utd': 2, 'gamma': 0.99, 'policy_delay': 3, 'batch_size': 256, 'buffer_size': 1000000, 'learning_starts': 5000, 'reset_models': False, 'ent_coef': {'type': 'auto', 'init': 1.0, 'target': 6.0}, 'critic': {'activation': 'relu', 'n_critics': 2, 'hs': [2048, 2048], 'dropout_rate': None, 'use_layer_norm': False, 'n_atoms': 101, 'v_min': -200, 'v_max': 200, 'entr_coeff': 0.005}, 'optimizer': {'bn': True, 'bn_momentum': 0.99, 'bn_mode': 'brn_actor', 'bn_warmup': 100000, 'lr_critic': 0.0003, 'lr_actor': 0.0003, 'b1': 0.5, 'do_actor_grad_clip': True, 'actor_grad_clip': 1.0}, 'actor': {'diff_steps': 16}}, 'sampler': {'score_model': {'use_target_score': False, 'num_layers': 3, 'num_hid': 256, 'outer_clip': 10000.0, 'inner_clip': 100.0, 'weight_init': 1e-08, 'bias_init': 0.0, 'layer_norm': False, 'time_coder_out': 256}, 'dt_schedule': <function get_cosine_schedule.<locals>.cosine_schedule at 0x7f23f13b3560>, 'name': 'dis', 'underdamped': False, 'integrator': 'EM', 'init_std': 2.5, 'friction': 1.0, 'learn_prior': False, 'learn_betas': False, 'learn_friction': True, 'learn_mass_matrix': False}, 'env_name': 'metadrive/MetaDriveEnv', 'eval_enabled': False, 'env_kwargs': {'use_render': False, 'start_seed': 0, 'num_scenarios': 1, 'map': 3, 'store_map': True, 'traffic_density': 0.1, 'need_inverse_traffic': False, 'traffic_mode': 'Trigger', 'random_traffic': False, 'horizon': 1000}, 'wandb': {'entity': None, 'group': 'DIME_metadrive/MetaDriveEnv', 'project': 'DIME', 'job_type': 'lr0.0003', 'activate': True}, 'seed': 0, 'use_jit': True, 'tot_time_steps': 1000000.0, 'log_freq': 100, 'save_every_n_steps': 5000, 'step_size': 0.0003, 'step_size_betas': 0.0003, 'use_path_gradient': False, 'use_target_score': False, 'dt': 0.1, 'learn_dt': True, 'per_step_dt': False, 'per_dim_friction': True, 'use_step_size_scheduler': False, 'warmup': 'const', 'iters': 1000000.0, 'warmup_iters': 60000, '_wandb': {}}
+2026-03-03 09:30:33,124 INFO    MainThread:10407 [wandb_init.py:init():892] starting backend
+2026-03-03 09:30:33,342 INFO    MainThread:10407 [wandb_init.py:init():895] sending inform_init request
+2026-03-03 09:30:33,345 INFO    MainThread:10407 [wandb_init.py:init():903] backend started and connected
+2026-03-03 09:30:33,347 INFO    MainThread:10407 [wandb_init.py:init():973] updated telemetry
+2026-03-03 09:30:33,355 INFO    MainThread:10407 [wandb_init.py:init():997] communicating run to backend with 90.0 second timeout
+2026-03-03 09:30:35,347 INFO    MainThread:10407 [wandb_init.py:init():1042] starting run threads in backend
+2026-03-03 09:30:35,412 INFO    MainThread:10407 [wandb_run.py:_console_start():2524] atexit reg
+2026-03-03 09:30:35,412 INFO    MainThread:10407 [wandb_run.py:_redirect():2373] redirect: wrap_raw
+2026-03-03 09:30:35,412 INFO    MainThread:10407 [wandb_run.py:_redirect():2442] Wrapping output streams.
+2026-03-03 09:30:35,412 INFO    MainThread:10407 [wandb_run.py:_redirect():2465] Redirects installed.
+2026-03-03 09:30:35,414 INFO    MainThread:10407 [wandb_init.py:init():1082] run started, returning control to user process
+2026-03-03 09:30:41,710 INFO    MainThread:10407 [wandb_run.py:_finish():2291] finishing run 2450-jilin-university/DIME/1qpili1k
+2026-03-03 09:30:41,711 INFO    MainThread:10407 [wandb_run.py:_atexit_cleanup():2490] got exitcode: 0
+2026-03-03 09:30:41,712 INFO    MainThread:10407 [wandb_run.py:_restore():2472] restore
+2026-03-03 09:30:41,713 INFO    MainThread:10407 [wandb_run.py:_restore():2478] restore done
+2026-03-03 09:30:44,911 INFO    MainThread:10407 [wandb_run.py:_footer_sync_info():3868] logging synced files

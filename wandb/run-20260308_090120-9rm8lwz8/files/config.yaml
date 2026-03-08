@@ -1,0 +1,370 @@
+_current_progress_remaining:
+    value: 1
+_custom_logger:
+    value: "False"
+_episode_num:
+    value: 0
+_episode_storage:
+    value: None
+_last_episode_starts:
+    value: '[ True]'
+_last_obs:
+    value: |-
+        [[0.09722222 0.4861111  0.5        0.01234568 0.5        0.5
+          0.5        0.         0.5        0.55       0.465      0.
+          0.5        0.5        0.95       0.46500003 0.         0.5
+          0.5        1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.         1.         1.         1.         1.         1.
+          1.        ]]
+_last_original_obs:
+    value: None
+_logger:
+    value: <stable_baselines3.common.logger.Logger object at 0x7f31e83c08d0>
+_n_updates:
+    value: 0
+_num_timesteps_at_start:
+    value: 0
+_stats_window_size:
+    value: 100
+_total_timesteps:
+    value: 1e+06
+_vec_normalize_env:
+    value: None
+_wandb:
+    value:
+        cli_version: 0.25.0
+        e:
+            dw40i0piv37dqfcjthejeihqx9x5omnk:
+                args:
+                    - env=metadrive_roundabout
+                codePath: run_dime.py
+                codePathLocal: run_dime.py
+                cpu_count: 96
+                cpu_count_logical: 192
+                cudaVersion: "12.8"
+                disk:
+                    /:
+                        total: "1081705279488"
+                        used: "468954791936"
+                email: 2450308086@qq.com
+                executable: /opt/conda/envs/dime/bin/python
+                git:
+                    commit: ab25b2d1614abdec2a486a8724871ed0f298ff87
+                    remote: https://github.com/ALRhub/DIME.git
+                gpu: NVIDIA H20-3e
+                gpu_count: 2
+                gpu_nvidia:
+                    - architecture: Hopper
+                      cudaCores: 9984
+                      memoryTotal: "150754820096"
+                      name: NVIDIA H20-3e
+                      uuid: GPU-7dc54df2-c1ea-b286-65f7-ed9fd4ba7d24
+                    - architecture: Hopper
+                      cudaCores: 9984
+                      memoryTotal: "150754820096"
+                      name: NVIDIA H20-3e
+                      uuid: GPU-d5a64840-4d24-bc78-ece5-2d354e23a2c7
+                host: diffusion-onlinerl-lys-0
+                memory:
+                    total: "2163314601984"
+                os: Linux-5.10.134-16.3.al8.x86_64-x86_64-with-glibc2.35
+                program: /workspace/diffusion-rl/DIME/run_dime.py
+                python: CPython 3.11.14
+                root: /workspace/diffusion-rl/DIME
+                startedAt: "2026-03-08T09:01:20.844029Z"
+                writerId: dw40i0piv37dqfcjthejeihqx9x5omnk
+        m: []
+        python_version: 3.11.14
+        t:
+            "1":
+                - 1
+                - 12
+                - 45
+                - 50
+            "2":
+                - 1
+                - 12
+                - 45
+                - 50
+            "3":
+                - 13
+                - 16
+                - 22
+                - 35
+                - 41
+                - 61
+            "4": 3.11.14
+            "5": 0.25.0
+            "12": 0.25.0
+            "13": linux-x86_64
+action_noise:
+    value: None
+action_space:
+    value: Box(-1.0, 1.0, (2,), float32)
+alg:
+    value:
+        actor:
+            diff_steps: 16
+        batch_size: 256
+        buffer_size: 1000000
+        critic:
+            activation: relu
+            dropout_rate: null
+            entr_coeff: 0.005
+            hs:
+                - 2048
+                - 2048
+            n_atoms: 101
+            n_critics: 2
+            use_layer_norm: false
+            v_max: 300
+            v_min: -300
+        ent_coef:
+            init: 1
+            target: 6
+            type: auto
+        gamma: 0.99
+        learning_starts: 5000
+        optimizer:
+            actor_grad_clip: 1
+            b1: 0.5
+            bn: true
+            bn_mode: brn_actor
+            bn_momentum: 0.99
+            bn_warmup: 100000
+            do_actor_grad_clip: true
+            lr_actor: 0.0003
+            lr_critic: 0.0003
+        policy_delay: 3
+        policy_tau: 1
+        reset_models: false
+        tau: 1
+        utd: 2
+algo:
+    value: DIME
+batch_size:
+    value: 256
+buffer_size:
+    value: 1000000
+cfg:
+    value: '{''alg'': {''tau'': 1.0, ''policy_tau'': 1.0, ''utd'': 2, ''gamma'': 0.99, ''policy_delay'': 3, ''batch_size'': 256, ''buffer_size'': 1000000, ''learning_starts'': 5000, ''reset_models'': False, ''ent_coef'': {''type'': ''auto'', ''init'': 1.0, ''target'': 6.0}, ''critic'': {''activation'': ''relu'', ''n_critics'': 2, ''hs'': [2048, 2048], ''dropout_rate'': None, ''use_layer_norm'': False, ''n_atoms'': 101, ''v_min'': -300, ''v_max'': 300, ''entr_coeff'': 0.005}, ''optimizer'': {''bn'': True, ''bn_momentum'': 0.99, ''bn_mode'': ''brn_actor'', ''bn_warmup'': 100000, ''lr_critic'': 0.0003, ''lr_actor'': 0.0003, ''b1'': 0.5, ''do_actor_grad_clip'': True, ''actor_grad_clip'': 1.0}, ''actor'': {''diff_steps'': 16}}, ''sampler'': {''score_model'': {''use_target_score'': False, ''num_layers'': 3, ''num_hid'': 256, ''outer_clip'': 10000.0, ''inner_clip'': 100.0, ''weight_init'': 1e-08, ''bias_init'': 0.0, ''layer_norm'': False, ''time_coder_out'': 256}, ''dt_schedule'': <function get_cosine_schedule.<locals>.cosine_schedule at 0x7f31fbe9b740>, ''name'': ''dis'', ''underdamped'': False, ''integrator'': ''EM'', ''init_std'': 2.5, ''friction'': 1.0, ''learn_prior'': False, ''learn_betas'': False, ''learn_friction'': True, ''learn_mass_matrix'': False}, ''env_name'': ''metadrive/MetaDriveEnv'', ''eval_enabled'': False, ''env_kwargs'': {''use_render'': False, ''start_seed'': 0, ''num_scenarios'': 10, ''map'': ''O'', ''store_map'': True, ''traffic_density'': 0.3, ''need_inverse_traffic'': False, ''traffic_mode'': ''trigger'', ''random_traffic'': False, ''horizon'': 1000}, ''wandb'': {''entity'': None, ''group'': ''DIME_metadrive/MetaDriveEnv'', ''project'': ''DIME'', ''job_type'': ''lr0.0003'', ''activate'': True}, ''seed'': 0, ''use_jit'': True, ''tot_time_steps'': 1000000.0, ''log_freq'': 100, ''save_every_n_steps'': 5000, ''step_size'': 0.0003, ''step_size_betas'': 0.0003, ''use_path_gradient'': False, ''use_target_score'': False, ''dt'': 0.1, ''learn_dt'': True, ''per_step_dt'': False, ''per_dim_friction'': True, ''use_step_size_scheduler'': False, ''warmup'': ''const'', ''iters'': 1000000.0, ''warmup_iters'': 60000}'
+crossq_style:
+    value: "True"
+device:
+    value: cuda
+dt:
+    value: 0.1
+ent_coef:
+    value: |-
+        EntropyCoef(
+            # attributes
+            ent_coef_init = 1.0
+        )
+ent_coef_params:
+    value: '{''type'': ''auto'', ''init'': 1.0, ''target'': 6.0}'
+ent_coef_state:
+    value: |-
+        TrainState(step=0, apply_fn=<bound method Module.apply of EntropyCoef(
+            # attributes
+            ent_coef_init = 1.0
+        )>, params={'log_ent_coef': Array(0., dtype=float32, weak_type=True)}, tx=GradientTransformationExtraArgs(init=<function chain.<locals>.init_fn at 0x7f2fc80cfce0>, update=<function chain.<locals>.update_fn at 0x7f2fc80cf880>), opt_state=(ScaleByAdamState(count=Array(0, dtype=int32), mu={'log_ent_coef': Array(0., dtype=float32, weak_type=True)}, nu={'log_ent_coef': Array(0., dtype=float32, weak_type=True)}), EmptyState()))
+env:
+    value: <stable_baselines3.common.vec_env.dummy_vec_env.DummyVecEnv object at 0x7f36e8943e50>
+env_kwargs:
+    value:
+        horizon: 1000
+        map: O
+        need_inverse_traffic: false
+        num_scenarios: 10
+        random_traffic: false
+        start_seed: 0
+        store_map: true
+        traffic_density: 0.3
+        traffic_mode: trigger
+        use_render: false
+env_name:
+    value: metadrive/MetaDriveEnv
+ep_info_buffer:
+    value: deque([], maxlen=100)
+ep_success_buffer:
+    value: deque([], maxlen=100)
+eval_enabled:
+    value: false
+gamma:
+    value: 0.99
+gradient_steps:
+    value: 2
+iters:
+    value: 1e+06
+key:
+    value: |-
+        Array((), dtype=key<fry>) overlaying:
+        [ 992688288 1281546379]
+learn_dt:
+    value: true
+learning_rate:
+    value: 0.0003
+learning_starts:
+    value: 5000
+log_freq:
+    value: 100
+lr_schedule:
+    value: <function constant_fn.<locals>.func at 0x7f31e84f7880>
+model_save_path:
+    value: ./checkpoints/DIME_metadrive/MetaDriveEnv/lr0.0003/seed=0_start=20260308-090123/
+n_envs:
+    value: 1
+num_timesteps:
+    value: 0
+observation_space:
+    value: Box(-0.0, 1.0, (259,), float32)
+optimize_memory_usage:
+    value: "False"
+per_dim_friction:
+    value: true
+per_step_dt:
+    value: false
+policy:
+    value: DiffPol()
+policy_class:
+    value: <class 'diffusion.diffusion_policy.DiffPol'>
+policy_delay:
+    value: 3
+policy_kwargs:
+    value: '{''use_sde'': False}'
+policy_q_reduce_fn:
+    value: <function mean at 0x7f37a6ef1440>
+policy_tau:
+    value: 1
+qf:
+    value: |-
+        VectorCritic(
+            # attributes
+            net_arch = [2048, 2048]
+            activation_fn = ReLU
+            batch_norm_momentum = 0.99
+            bn_warmup = 100000
+            use_batch_norm = True
+            batch_norm_mode = 'brn_actor'
+            use_layer_norm = False
+            dropout_rate = None
+            n_critics = 2
+            n_atoms = 101
+        )
+qf_learning_rate:
+    value: 0.0003
+replay_buffer:
+    value: <stable_baselines3.common.buffers.ReplayBuffer object at 0x7f31e831d110>
+replay_buffer_class:
+    value: <class 'stable_baselines3.common.buffers.ReplayBuffer'>
+replay_buffer_kwargs:
+    value: '{}'
+sampler:
+    value:
+        dt_schedule: diffusion.common.scheduler.get_cosine_schedule.<locals>.cosine_schedule
+        friction: 1
+        init_std: 2.5
+        integrator: EM
+        learn_betas: false
+        learn_friction: true
+        learn_mass_matrix: false
+        learn_prior: false
+        name: dis
+        score_model:
+            bias_init: 0
+            inner_clip: 100
+            layer_norm: false
+            num_hid: 256
+            num_layers: 3
+            outer_clip: 10000
+            time_coder_out: 256
+            use_target_score: false
+            weight_init: 1e-08
+        underdamped: false
+save_every_n_steps:
+    value: 5000
+sde_sample_freq:
+    value: -1
+seed:
+    value: 0
+start_time:
+    value: 1772960488510110234
+step_size:
+    value: 0.0003
+step_size_betas:
+    value: 0.0003
+target_entropy:
+    value: 8
+tau:
+    value: 1
+tensorboard_log:
+    value: ./logs/DIME_metadrive/MetaDriveEnv/lr0.0003/seed=0_start=20260308-090123/
+tot_time_steps:
+    value: 1e+06
+train_freq:
+    value: 'TrainFreq(frequency=1, unit=<TrainFrequencyUnit.STEP: ''step''>)'
+use_bnstats_from_live_net:
+    value: "False"
+use_jit:
+    value: true
+use_path_gradient:
+    value: false
+use_sde:
+    value: "False"
+use_sde_at_warmup:
+    value: "False"
+use_step_size_scheduler:
+    value: false
+use_target_score:
+    value: false
+verbose:
+    value: 0
+wandb:
+    value:
+        activate: true
+        entity: null
+        group: DIME_metadrive/MetaDriveEnv
+        job_type: lr0.0003
+        project: DIME
+warmup:
+    value: const
+warmup_iters:
+    value: 60000

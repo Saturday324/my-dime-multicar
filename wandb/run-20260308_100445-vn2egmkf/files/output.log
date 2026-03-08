@@ -1,0 +1,919 @@
+myosuite not installed, skipping
+[2026-03-08 10:04:47,524][OpenGL.acceleratesupport][INFO] - No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate'
+[2026-03-08 10:04:47,530][OpenGL.platform.ctypesloader][INFO] - Failed to load library ( 'libOpenGL.so.0' ): libOpenGL.so.0: cannot open shared object file: No such file or directory
+Loaded metadrive from local clone: /workspace/diffusion-rl/DIME/metadrive
+[38;20m[INFO] Environment: MultiAgentRoundaboutEnv[0m
+[38;20m[INFO] MetaDrive version: 0.4.3[0m
+[38;20m[INFO] Sensors: [lidar: Lidar(), side_detector: SideDetector(), lane_line_detector: LaneLineDetector()][0m
+[38;20m[INFO] Render Mode: none[0m
+[38;20m[INFO] Horizon (Max steps per agent): 1000[0m
+[33;20m[WARNING] When reaching max steps, both 'terminate' and 'truncate will be True.Generally, only the `truncate` should be `True`. (base_env.py:395)[0m
+[2026-03-08 10:04:48,490][jax._src.xla_bridge][INFO] - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+[2026-03-08 10:04:48,491][jax._src.xla_bridge][INFO] - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+Logging to ./logs/DIME_metadrive/MultiAgentRoundaboutEnv/lr0.0003/seed=0_start=20260308-100447/
+[38;20m[INFO] Assets version: 0.4.3[0m
+[38;20m[INFO] Known Pipes: glxGraphicsPipe[0m
+[38;20m[INFO] Start Scenario Index: 0, Num Scenarios : 1[0m
+------------------------------
+| rollout/             |     |
+|    active_agents     | 8   |
+|    agent_steps_total | 800 |
+|    env_steps         | 100 |
+| time/                |     |
+|    total_timesteps   | 100 |
+------------------------------
+-------------------------------
+| rollout/             |      |
+|    active_agents     | 8    |
+|    agent_steps_total | 1600 |
+|    env_steps         | 200  |
+| time/                |      |
+|    total_timesteps   | 200  |
+-------------------------------
+-------------------------------
+| rollout/             |      |
+|    active_agents     | 8    |
+|    agent_steps_total | 2400 |
+|    env_steps         | 300  |
+| time/                |      |
+|    total_timesteps   | 300  |
+-------------------------------
+-------------------------------
+| rollout/             |      |
+|    active_agents     | 8    |
+|    agent_steps_total | 3200 |
+|    env_steps         | 400  |
+| time/                |      |
+|    total_timesteps   | 400  |
+-------------------------------
+-------------------------------
+| rollout/             |      |
+|    active_agents     | 8    |
+|    agent_steps_total | 4000 |
+|    env_steps         | 500  |
+| time/                |      |
+|    total_timesteps   | 500  |
+-------------------------------
+-------------------------------
+| rollout/             |      |
+|    active_agents     | 8    |
+|    agent_steps_total | 4800 |
+|    env_steps         | 600  |
+| time/                |      |
+|    total_timesteps   | 600  |
+-------------------------------
+-------------------------------
+| rollout/             |      |
+|    active_agents     | 7    |
+|    agent_steps_total | 5522 |
+|    env_steps         | 700  |
+| time/                |      |
+|    total_timesteps   | 700  |
+-------------------------------
+-------------------------------
+| rollout/             |      |
+|    active_agents     | 5    |
+|    agent_steps_total | 6161 |
+|    env_steps         | 800  |
+| time/                |      |
+|    total_timesteps   | 800  |
+-------------------------------
+-------------------------------
+| rollout/             |      |
+|    active_agents     | 5    |
+|    agent_steps_total | 6661 |
+|    env_steps         | 900  |
+| time/                |      |
+|    total_timesteps   | 900  |
+-------------------------------
+-------------------------------
+| rollout/             |      |
+|    active_agents     | 5    |
+|    agent_steps_total | 7161 |
+|    env_steps         | 1000 |
+| time/                |      |
+|    total_timesteps   | 1000 |
+-------------------------------
+------------------------------------------
+| rollout/                    |          |
+|    episode_agent_steps      | 7161     |
+|    episode_alive_agents_end | 5        |
+|    episode_group_reward     | 24.6     |
+|    episode_length           | 1000     |
+------------------------------------------
+[Episode 1] group_reward=24.586, length=1000, agent_steps=7161, alive_end=5
+-------------------------------
+| rollout/             |      |
+|    active_agents     | 8    |
+|    agent_steps_total | 7961 |
+|    env_steps         | 1100 |
+| time/                |      |
+|    total_timesteps   | 1100 |
+-------------------------------
+-------------------------------
+| rollout/             |      |
+|    active_agents     | 8    |
+|    agent_steps_total | 8761 |
+|    env_steps         | 1200 |
+| time/                |      |
+|    total_timesteps   | 1200 |
+-------------------------------
+-------------------------------
+| rollout/             |      |
+|    active_agents     | 8    |
+|    agent_steps_total | 9561 |
+|    env_steps         | 1300 |
+| time/                |      |
+|    total_timesteps   | 1300 |
+-------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 10361 |
+|    env_steps         | 1400  |
+| time/                |       |
+|    total_timesteps   | 1400  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 11161 |
+|    env_steps         | 1500  |
+| time/                |       |
+|    total_timesteps   | 1500  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 11961 |
+|    env_steps         | 1600  |
+| time/                |       |
+|    total_timesteps   | 1600  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 7     |
+|    agent_steps_total | 12676 |
+|    env_steps         | 1700  |
+| time/                |       |
+|    total_timesteps   | 1700  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 7     |
+|    agent_steps_total | 13376 |
+|    env_steps         | 1800  |
+| time/                |       |
+|    total_timesteps   | 1800  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 7     |
+|    agent_steps_total | 14076 |
+|    env_steps         | 1900  |
+| time/                |       |
+|    total_timesteps   | 1900  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 7     |
+|    agent_steps_total | 14776 |
+|    env_steps         | 2000  |
+| time/                |       |
+|    total_timesteps   | 2000  |
+--------------------------------
+------------------------------------------
+| rollout/                    |          |
+|    episode_agent_steps      | 7615     |
+|    episode_alive_agents_end | 7        |
+|    episode_group_reward     | 48.8     |
+|    episode_length           | 1000     |
+------------------------------------------
+[Episode 2] group_reward=48.840, length=1000, agent_steps=7615, alive_end=7
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 15576 |
+|    env_steps         | 2100  |
+| time/                |       |
+|    total_timesteps   | 2100  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 16376 |
+|    env_steps         | 2200  |
+| time/                |       |
+|    total_timesteps   | 2200  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 17176 |
+|    env_steps         | 2300  |
+| time/                |       |
+|    total_timesteps   | 2300  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 17976 |
+|    env_steps         | 2400  |
+| time/                |       |
+|    total_timesteps   | 2400  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 18776 |
+|    env_steps         | 2500  |
+| time/                |       |
+|    total_timesteps   | 2500  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 19576 |
+|    env_steps         | 2600  |
+| time/                |       |
+|    total_timesteps   | 2600  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 20376 |
+|    env_steps         | 2700  |
+| time/                |       |
+|    total_timesteps   | 2700  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 21176 |
+|    env_steps         | 2800  |
+| time/                |       |
+|    total_timesteps   | 2800  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 21976 |
+|    env_steps         | 2900  |
+| time/                |       |
+|    total_timesteps   | 2900  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 22776 |
+|    env_steps         | 3000  |
+| time/                |       |
+|    total_timesteps   | 3000  |
+--------------------------------
+------------------------------------------
+| rollout/                    |          |
+|    episode_agent_steps      | 8000     |
+|    episode_alive_agents_end | 8        |
+|    episode_group_reward     | 64.8     |
+|    episode_length           | 1000     |
+------------------------------------------
+[Episode 3] group_reward=64.802, length=1000, agent_steps=8000, alive_end=8
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 23576 |
+|    env_steps         | 3100  |
+| time/                |       |
+|    total_timesteps   | 3100  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 24376 |
+|    env_steps         | 3200  |
+| time/                |       |
+|    total_timesteps   | 3200  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 25176 |
+|    env_steps         | 3300  |
+| time/                |       |
+|    total_timesteps   | 3300  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 25976 |
+|    env_steps         | 3400  |
+| time/                |       |
+|    total_timesteps   | 3400  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 26776 |
+|    env_steps         | 3500  |
+| time/                |       |
+|    total_timesteps   | 3500  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 27576 |
+|    env_steps         | 3600  |
+| time/                |       |
+|    total_timesteps   | 3600  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 28376 |
+|    env_steps         | 3700  |
+| time/                |       |
+|    total_timesteps   | 3700  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 29176 |
+|    env_steps         | 3800  |
+| time/                |       |
+|    total_timesteps   | 3800  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 29976 |
+|    env_steps         | 3900  |
+| time/                |       |
+|    total_timesteps   | 3900  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 30776 |
+|    env_steps         | 4000  |
+| time/                |       |
+|    total_timesteps   | 4000  |
+--------------------------------
+------------------------------------------
+| rollout/                    |          |
+|    episode_agent_steps      | 8000     |
+|    episode_alive_agents_end | 8        |
+|    episode_group_reward     | 61.1     |
+|    episode_length           | 1000     |
+------------------------------------------
+[Episode 4] group_reward=61.118, length=1000, agent_steps=8000, alive_end=8
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 31576 |
+|    env_steps         | 4100  |
+| time/                |       |
+|    total_timesteps   | 4100  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 32376 |
+|    env_steps         | 4200  |
+| time/                |       |
+|    total_timesteps   | 4200  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 33176 |
+|    env_steps         | 4300  |
+| time/                |       |
+|    total_timesteps   | 4300  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 33976 |
+|    env_steps         | 4400  |
+| time/                |       |
+|    total_timesteps   | 4400  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 34776 |
+|    env_steps         | 4500  |
+| time/                |       |
+|    total_timesteps   | 4500  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 35576 |
+|    env_steps         | 4600  |
+| time/                |       |
+|    total_timesteps   | 4600  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 8     |
+|    agent_steps_total | 36376 |
+|    env_steps         | 4700  |
+| time/                |       |
+|    total_timesteps   | 4700  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 7     |
+|    agent_steps_total | 37138 |
+|    env_steps         | 4800  |
+| time/                |       |
+|    total_timesteps   | 4800  |
+--------------------------------
+--------------------------------
+| rollout/             |       |
+|    active_agents     | 7     |
+|    agent_steps_total | 37838 |
+|    env_steps         | 4900  |
+| time/                |       |
+|    total_timesteps   | 4900  |
+--------------------------------
+/opt/conda/envs/dime/lib/python3.11/site-packages/jax/_src/linear_util.py:193: DeprecationWarning: Passing arguments 'a', 'a_min' or 'a_max' to jax.numpy.clip is deprecated. Please use 'arr', 'min' or 'max' respectively instead.
+  ans = self.f(*args, **dict(self.params, **kwargs))
+[34m[1mwandb[0m: [33mWARNING[0m Step cannot be set when using tensorboard syncing. Please use `run.define_metric(...)` to define a custom metric to log your step values.
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 6        |
+|    agent_steps_total | 38519    |
+|    env_steps         | 5000     |
+| time/                |          |
+|    total_timesteps   | 5000     |
+| train/               |          |
+|    actor_loss        | 0        |
+|    critic_loss       | 9.43     |
+|    current_q_values  | -7.83    |
+|    ent_coef          | 1        |
+|    entrQ_1           | 4.27     |
+|    entrQ_2           | 4.25     |
+|    n_updates         | 2        |
+|    next_q_values     | 0.0099   |
+-----------------------------------
+------------------------------------------
+| rollout/                    |          |
+|    episode_agent_steps      | 7743     |
+|    episode_alive_agents_end | 6        |
+|    episode_group_reward     | 39.5     |
+|    episode_length           | 1000     |
+------------------------------------------
+[Episode 5] group_reward=39.455, length=1000, agent_steps=7743, alive_end=6
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 8        |
+|    agent_steps_total | 39319    |
+|    env_steps         | 5100     |
+| time/                |          |
+|    total_timesteps   | 5100     |
+| train/               |          |
+|    actor_loss        | -2.73    |
+|    critic_loss       | 8.85     |
+|    current_q_values  | -1.86    |
+|    ent_coef          | 0.931    |
+|    entrQ_1           | 4.25     |
+|    entrQ_2           | 4.24     |
+|    entropy           | 0        |
+|    n_updates         | 202      |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 4.38     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.73    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 8        |
+|    agent_steps_total | 40119    |
+|    env_steps         | 5200     |
+| time/                |          |
+|    total_timesteps   | 5200     |
+| train/               |          |
+|    actor_loss        | -1.11    |
+|    critic_loss       | 8.97     |
+|    current_q_values  | 1.18     |
+|    ent_coef          | 0.866    |
+|    entrQ_1           | 4.5      |
+|    entrQ_2           | 4.5      |
+|    entropy           | 0        |
+|    n_updates         | 402      |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 4.51     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.8     |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 8        |
+|    agent_steps_total | 40919    |
+|    env_steps         | 5300     |
+| time/                |          |
+|    total_timesteps   | 5300     |
+| train/               |          |
+|    actor_loss        | 0        |
+|    critic_loss       | 9.02     |
+|    current_q_values  | 2.99     |
+|    ent_coef          | 0.81     |
+|    entrQ_1           | 4.53     |
+|    entrQ_2           | 4.54     |
+|    entropy           | 0        |
+|    n_updates         | 602      |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 4.14     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.69    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 7        |
+|    agent_steps_total | 41624    |
+|    env_steps         | 5400     |
+| time/                |          |
+|    total_timesteps   | 5400     |
+| train/               |          |
+|    actor_loss        | -3.79    |
+|    critic_loss       | 9        |
+|    current_q_values  | 2.96     |
+|    ent_coef          | 0.759    |
+|    entrQ_1           | 4.53     |
+|    entrQ_2           | 4.53     |
+|    entropy           | 0        |
+|    n_updates         | 802      |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 4.25     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.74    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 6        |
+|    agent_steps_total | 42244    |
+|    env_steps         | 5500     |
+| time/                |          |
+|    total_timesteps   | 5500     |
+| train/               |          |
+|    actor_loss        | -4.19    |
+|    critic_loss       | 8.91     |
+|    current_q_values  | 3.22     |
+|    ent_coef          | 0.714    |
+|    entrQ_1           | 4.49     |
+|    entrQ_2           | 4.43     |
+|    entropy           | 0        |
+|    n_updates         | 1002     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 3.8      |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.56    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 6        |
+|    agent_steps_total | 42844    |
+|    env_steps         | 5600     |
+| time/                |          |
+|    total_timesteps   | 5600     |
+| train/               |          |
+|    actor_loss        | 0        |
+|    critic_loss       | 8.73     |
+|    current_q_values  | 4.38     |
+|    ent_coef          | 0.672    |
+|    entrQ_1           | 4.4      |
+|    entrQ_2           | 4.39     |
+|    entropy           | 0        |
+|    n_updates         | 1202     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 4.22     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.76    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 6        |
+|    agent_steps_total | 43444    |
+|    env_steps         | 5700     |
+| time/                |          |
+|    total_timesteps   | 5700     |
+| train/               |          |
+|    actor_loss        | -9.05    |
+|    critic_loss       | 8.63     |
+|    current_q_values  | 8.25     |
+|    ent_coef          | 0.634    |
+|    entrQ_1           | 4.34     |
+|    entrQ_2           | 4.34     |
+|    entropy           | 0        |
+|    n_updates         | 1402     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 4.04     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.68    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 6        |
+|    agent_steps_total | 44044    |
+|    env_steps         | 5800     |
+| time/                |          |
+|    total_timesteps   | 5800     |
+| train/               |          |
+|    actor_loss        | -16.8    |
+|    critic_loss       | 8.4      |
+|    current_q_values  | 14.8     |
+|    ent_coef          | 0.6      |
+|    entrQ_1           | 4.15     |
+|    entrQ_2           | 3.98     |
+|    entropy           | 0        |
+|    n_updates         | 1602     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 4.28     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.79    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 6        |
+|    agent_steps_total | 44644    |
+|    env_steps         | 5900     |
+| time/                |          |
+|    total_timesteps   | 5900     |
+| train/               |          |
+|    actor_loss        | 0        |
+|    critic_loss       | 8.07     |
+|    current_q_values  | 21.6     |
+|    ent_coef          | 0.568    |
+|    entrQ_1           | 4.06     |
+|    entrQ_2           | 4.06     |
+|    entropy           | 0        |
+|    n_updates         | 1802     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 3.69     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.58    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 6        |
+|    agent_steps_total | 45244    |
+|    env_steps         | 6000     |
+| time/                |          |
+|    total_timesteps   | 6000     |
+| train/               |          |
+|    actor_loss        | -26.5    |
+|    critic_loss       | 7.71     |
+|    current_q_values  | 25.7     |
+|    ent_coef          | 0.538    |
+|    entrQ_1           | 3.88     |
+|    entrQ_2           | 3.88     |
+|    entropy           | 0        |
+|    n_updates         | 2002     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 3.91     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.69    |
+-----------------------------------
+------------------------------------------
+| rollout/                    |          |
+|    episode_agent_steps      | 6725     |
+|    episode_alive_agents_end | 6        |
+|    episode_group_reward     | 41       |
+|    episode_length           | 1000     |
+------------------------------------------
+[Episode 6] group_reward=40.958, length=1000, agent_steps=6725, alive_end=6
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 8        |
+|    agent_steps_total | 46044    |
+|    env_steps         | 6100     |
+| time/                |          |
+|    total_timesteps   | 6100     |
+| train/               |          |
+|    actor_loss        | -28      |
+|    critic_loss       | 7.31     |
+|    current_q_values  | 27.6     |
+|    ent_coef          | 0.511    |
+|    entrQ_1           | 3.68     |
+|    entrQ_2           | 3.68     |
+|    entropy           | 0        |
+|    n_updates         | 2202     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 3.94     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.64    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 8        |
+|    agent_steps_total | 46844    |
+|    env_steps         | 6200     |
+| time/                |          |
+|    total_timesteps   | 6200     |
+| train/               |          |
+|    actor_loss        | 0        |
+|    critic_loss       | 7.05     |
+|    current_q_values  | 28.9     |
+|    ent_coef          | 0.485    |
+|    entrQ_1           | 3.55     |
+|    entrQ_2           | 3.55     |
+|    entropy           | 0        |
+|    n_updates         | 2402     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 3.93     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.7     |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 7        |
+|    agent_steps_total | 47593    |
+|    env_steps         | 6300     |
+| time/                |          |
+|    total_timesteps   | 6300     |
+| train/               |          |
+|    actor_loss        | -29.6    |
+|    critic_loss       | 6.81     |
+|    current_q_values  | 28.9     |
+|    ent_coef          | 0.461    |
+|    entrQ_1           | 3.43     |
+|    entrQ_2           | 3.43     |
+|    entropy           | 0        |
+|    n_updates         | 2602     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 3.93     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.68    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 7        |
+|    agent_steps_total | 48293    |
+|    env_steps         | 6400     |
+| time/                |          |
+|    total_timesteps   | 6400     |
+| train/               |          |
+|    actor_loss        | -29.8    |
+|    critic_loss       | 6.61     |
+|    current_q_values  | 29.3     |
+|    ent_coef          | 0.439    |
+|    entrQ_1           | 3.32     |
+|    entrQ_2           | 3.31     |
+|    entropy           | 0        |
+|    n_updates         | 2802     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 3.47     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.51    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 7        |
+|    agent_steps_total | 48993    |
+|    env_steps         | 6500     |
+| time/                |          |
+|    total_timesteps   | 6500     |
+| train/               |          |
+|    actor_loss        | 0        |
+|    critic_loss       | 6.46     |
+|    current_q_values  | 28.9     |
+|    ent_coef          | 0.418    |
+|    entrQ_1           | 3.25     |
+|    entrQ_2           | 3.25     |
+|    entropy           | 0        |
+|    n_updates         | 3002     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 3.75     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.63    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 7        |
+|    agent_steps_total | 49693    |
+|    env_steps         | 6600     |
+| time/                |          |
+|    total_timesteps   | 6600     |
+| train/               |          |
+|    actor_loss        | -29      |
+|    critic_loss       | 6.31     |
+|    current_q_values  | 28.4     |
+|    ent_coef          | 0.399    |
+|    entrQ_1           | 3.18     |
+|    entrQ_2           | 3.18     |
+|    entropy           | 0        |
+|    n_updates         | 3202     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 3.85     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.68    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 7        |
+|    agent_steps_total | 50393    |
+|    env_steps         | 6700     |
+| time/                |          |
+|    total_timesteps   | 6700     |
+| train/               |          |
+|    actor_loss        | -28.2    |
+|    critic_loss       | 6.2      |
+|    current_q_values  | 27.6     |
+|    ent_coef          | 0.381    |
+|    entrQ_1           | 3.12     |
+|    entrQ_2           | 3.12     |
+|    entropy           | 0        |
+|    n_updates         | 3402     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 3.71     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.64    |
+-----------------------------------
+-----------------------------------
+| rollout/             |          |
+|    active_agents     | 7        |
+|    agent_steps_total | 51093    |
+|    env_steps         | 6800     |
+| time/                |          |
+|    total_timesteps   | 6800     |
+| train/               |          |
+|    actor_loss        | 0        |
+|    critic_loss       | 6.09     |
+|    current_q_values  | 27       |
+|    ent_coef          | 0.364    |
+|    entrQ_1           | 3.07     |
+|    entrQ_2           | 3.05     |
+|    entropy           | 0        |
+|    n_updates         | 3602     |
+|    next_q_values     | 0.0099   |
+|    run_costs         | 3.92     |
+|    sto_costs         | 0        |
+|    terminal_costs    | -4.71    |
+-----------------------------------
+Traceback (most recent call last):
+  File "/workspace/diffusion-rl/DIME/run_multiagent_dime.py", line 296, in <module>
+    main()
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/main.py", line 94, in decorated_main
+    _run_hydra(
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/utils.py", line 394, in _run_hydra
+    _run_app(
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/utils.py", line 457, in _run_app
+    run_and_report(
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/utils.py", line 220, in run_and_report
+    return func()
+           ^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/utils.py", line 458, in <lambda>
+    lambda: hydra.run(
+            ^^^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/hydra.py", line 119, in run
+    ret = run_job(
+          ^^^^^^^^
+  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/core/utils.py", line 186, in run_job
+    ret.return_value = task_function(task_cfg)
+                       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/run_multiagent_dime.py", line 277, in main
+    initialize_and_run(cfg)
+  File "/workspace/diffusion-rl/DIME/run_multiagent_dime.py", line 261, in initialize_and_run
+    _train_multiagent(model, env, cfg)
+  File "/workspace/diffusion-rl/DIME/run_multiagent_dime.py", line 175, in _train_multiagent
+    next_obs_dict, reward_dict, terminated_dict, truncated_dict, info_dict = env.step(actions)
+                                                                             ^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/envs/marl_envs/multi_agent_metadrive.py", line 131, in step
+    o, r, tm, tc, i = super(MultiAgentMetaDrive, self).step(actions)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/envs/base_env.py", line 437, in step
+    engine_info = self._step_simulator(actions)  # step the simulation
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/envs/base_env.py", line 468, in _step_simulator
+    scene_manager_after_step_infos = self.engine.after_step()
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/engine/base_engine.py", line 472, in after_step
+    new_step_info = manager.after_step(*args, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/manager/base_manager.py", line 309, in after_step
+    step_infos.update(self.for_each_active_agents(lambda v: v.after_step()))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/manager/base_manager.py", line 402, in for_each_active_agents
+    ret[k] = func(v, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/manager/base_manager.py", line 309, in <lambda>
+    step_infos.update(self.for_each_active_agents(lambda v: v.after_step()))
+                                                            ^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/component/vehicle/base_vehicle.py", line 239, in after_step
+    self.out_of_route = self._out_of_route()
+                        ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/component/vehicle/base_vehicle.py", line 281, in _out_of_route
+    left, right = self._dist_to_route_left_right()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/component/vehicle/base_vehicle.py", line 535, in _dist_to_route_left_right
+    lateral_to_right = navigation.get_current_lateral_range(self.position, self.engine) - lateral_to_left
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/component/navigation_module/node_network_navigation.py", line 260, in get_current_lateral_range
+    return self.get_current_lane_width() * self.get_current_lane_num()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/diffusion-rl/DIME/metadrive/metadrive/component/navigation_module/base_navigation.py", line 208, in get_current_lane_width
+    def get_current_lane_width(self) -> float:
+
+KeyboardInterrupt

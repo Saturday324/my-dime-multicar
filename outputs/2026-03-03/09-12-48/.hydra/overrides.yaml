@@ -1,0 +1,6 @@
+- env_name=metadrive/MetaDriveEnv
+- eval_enabled=false
+- wandb.activate=false
+- tot_time_steps=200000
+- +env_kwargs.use_render=false
+- +env_kwargs.num_scenarios=1

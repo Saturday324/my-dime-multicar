@@ -1,0 +1,4 @@
+- env=metadrive
+- alg.critic.v_min=-300
+- alg.critic.v_max=300
+- tot_time_steps=1000000

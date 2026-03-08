@@ -1,0 +1,73 @@
+myosuite not installed, skipping
+[2026-03-03 09:32:19,453][OpenGL.acceleratesupport][INFO] - No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate'
+[2026-03-03 09:32:19,458][OpenGL.platform.ctypesloader][INFO] - Failed to load library ( 'libOpenGL.so.0' ): libOpenGL.so.0: cannot open shared object file: No such file or directory
+Loaded metadrive from local clone: /workspace/diffusion-rl/DIME/metadrive
+[38;20m[INFO] Environment: MetaDriveEnv[0m
+[38;20m[INFO] MetaDrive version: 0.4.3[0m
+[38;20m[INFO] Sensors: [lidar: Lidar(), side_detector: SideDetector(), lane_line_detector: LaneLineDetector()][0m
+[38;20m[INFO] Render Mode: none[0m
+[38;20m[INFO] Horizon (Max steps per agent): 1000[0m
+[2026-03-03 09:32:20,542][jax._src.xla_bridge][INFO] - Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+[2026-03-03 09:32:20,544][jax._src.xla_bridge][INFO] - Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+Eval disabled (eval_enabled=false). Checkpoints will still be saved.
+[38;20m[INFO] Assets version: 0.4.3[0m
+[38;20m[INFO] Known Pipes: glxGraphicsPipe[0m
+[38;20m[INFO] Start Scenario Index: 0, Num Scenarios : 1[0m
+[2K/opt/conda/envs/dime/lib/python3.11/site-packages/jax/_src/linear_util.py:193: [ [33m0:00:17[0m < [36m0:53:33[0m , [31m310 it/s[0m ]
+DeprecationWarning: Passing arguments 'a', 'a_min' or 'a_max' to
+jax.numpy.clip is deprecated. Please use 'arr', 'min' or 'max' respectively
+instead.
+  ans = self.f(*args, **dict(self.params, **kwargs))
+[2KTraceback (most recent call last):[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━[0m [32m58,907/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:47[0m , [31m59 it/s[0m ]
+[2K  File "/workspace/diffusion-rl/DIME/run_dime.py", line 124, in <module>━━━━━━━━━[0m [32m58,907/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:47[0m , [31m59 it/s[0m ]
+    main()
+[2K  File "/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/main.py", line━━━[0m [32m58,907/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:47[0m , [31m59 it/s[0m ]
+94, in decorated_main
+    _run_hydra(
+[2K  File [0m [38;2;249;38;114m━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━[0m [32m58,907/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:47[0m , [31m59 it/s[0m ]
+"/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/utils.py",
+line 394, in _run_hydra
+    _run_app(
+[2K  File [0m [38;2;249;38;114m━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━[0m [32m58,907/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:47[0m , [31m59 it/s[0m ]
+"/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/utils.py",
+line 457, in _run_app
+    run_and_report(
+[2K  File [0m [38;2;249;38;114m━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━[0m [32m58,907/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:47[0m , [31m59 it/s[0m ]
+"/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/utils.py",
+line 220, in run_and_report
+    return func()
+           ^^^^^^
+[2K  File [0m [38;2;249;38;114m━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━[0m [32m58,907/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:47[0m , [31m59 it/s[0m ]
+"/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/utils.py",
+line 458, in <lambda>
+    lambda: hydra.run(
+            ^^^^^^^^^^
+[2K  File [0m [38;2;249;38;114m━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━[0m [32m58,907/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:47[0m , [31m59 it/s[0m ]
+"/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/_internal/hydra.py",
+line 119, in run
+    ret = run_job(
+          ^^^^^^^^
+[2K  File [0m [38;2;249;38;114m━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━[0m [32m58,907/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:47[0m , [31m59 it/s[0m ]
+"/opt/conda/envs/dime/lib/python3.11/site-packages/hydra/core/utils.py", line
+186, in run_job
+    ret.return_value = task_function(task_cfg)
+                       ^^^^^^^^^^^^^^^^^^^^^^^
+[2K  File "/workspace/diffusion-rl/DIME/run_dime.py", line 105, in main━━━━━━━━━━━━━[0m [32m58,907/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:47[0m , [31m59 it/s[0m ]
+    initialize_and_run(cfg)
+[2K  File "/workspace/diffusion-rl/DIME/run_dime.py", line 94, in ━━━━━━━━━━━━━━━━━━[0m [32m58,907/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:47[0m , [31m59 it/s[0m ]
+initialize_and_run
+    model.learn(total_timesteps=cfg.tot_time_steps, progress_bar=True,
+callback=callback_list)
+[2K  File "/workspace/diffusion-rl/DIME/diffusion/dime.py", line 199, in learn━━━━━━[0m [32m58,907/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:47[0m , [31m59 it/s[0m ]
+    return super().learn(
+           ^^^^^^^^^^^^^^
+[2K  File [0m [38;2;249;38;114m━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━[0m [32m58,907/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:47[0m , [31m59 it/s[0m ]
+"/opt/conda/envs/dime/lib/python3.11/site-packages/stable_baselines3/common/of
+f_policy_algorithm.py", line 331, in learn
+    self.train(batch_size=self.batch_size, gradient_steps=gradient_steps)
+[2K  File "/workspace/diffusion-rl/DIME/diffusion/dime.py", line 242, in train━━━━━━━━━━[0m [32m58,915/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:36[0m , [31m60 it/s[0m ]
+    ) = self._train(
+        ^^^^^^^^^^^^
+[2K  File "<string>", line 1, in <lambda>;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━[0m [32m58,915/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:36[0m , [31m60 it/s[0m ]
+[2KKeyboardInterrupt;249;38;114m━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━[0m [32m58,915/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:36[0m , [31m60 it/s[0m ]
+[35m   6%[0m [38;2;249;38;114m━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━[0m [32m58,915/1,000,000 [0m [ [33m0:16:34[0m < [36m4:23:36[0m , [31m60 it/s[0m ]

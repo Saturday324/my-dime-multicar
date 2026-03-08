@@ -1,0 +1,9 @@
+- tot_time_steps=200
+- env=metadrive_roundabout
+- wandb.activate=false
+- +env_kwargs.num_agents=4
+- +env_kwargs.allow_respawn=false
+- env_kwargs.num_scenarios=1
+- env_kwargs.traffic_density=0.0
+- env_kwargs.horizon=100
+- env_kwargs.use_render=false

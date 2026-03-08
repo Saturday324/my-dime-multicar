@@ -1,0 +1,51 @@
+{
+  "os":  "Linux-5.10.134-16.3.al8.x86_64-x86_64-with-glibc2.35",
+  "python":  "CPython 3.11.14",
+  "startedAt":  "2026-03-08T10:04:45.489902Z",
+  "args":  [
+    "env=metadrive_ma_roundabout",
+    "tot_time_steps=1000000"
+  ],
+  "program":  "/workspace/diffusion-rl/DIME/run_multiagent_dime.py",
+  "codePath":  "run_multiagent_dime.py",
+  "codePathLocal":  "run_multiagent_dime.py",
+  "git":  {
+    "remote":  "https://github.com/ALRhub/DIME.git",
+    "commit":  "ab25b2d1614abdec2a486a8724871ed0f298ff87"
+  },
+  "email":  "2450308086@qq.com",
+  "root":  "/workspace/diffusion-rl/DIME",
+  "host":  "diffusion-onlinerl-lys-0",
+  "executable":  "/opt/conda/envs/dime/bin/python",
+  "cpu_count":  96,
+  "cpu_count_logical":  192,
+  "gpu":  "NVIDIA H20-3e",
+  "gpu_count":  2,
+  "disk":  {
+    "/":  {
+      "total":  "1081705279488",
+      "used":  "469205815296"
+    }
+  },
+  "memory":  {
+    "total":  "2163314601984"
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA H20-3e",
+      "memoryTotal":  "150754820096",
+      "cudaCores":  9984,
+      "architecture":  "Hopper",
+      "uuid":  "GPU-7dc54df2-c1ea-b286-65f7-ed9fd4ba7d24"
+    },
+    {
+      "name":  "NVIDIA H20-3e",
+      "memoryTotal":  "150754820096",
+      "cudaCores":  9984,
+      "architecture":  "Hopper",
+      "uuid":  "GPU-d5a64840-4d24-bc78-ece5-2d354e23a2c7"
+    }
+  ],
+  "cudaVersion":  "12.8",
+  "writerId":  "4b4eweat7djp2mlb768dx92hc5uox1su"
+}

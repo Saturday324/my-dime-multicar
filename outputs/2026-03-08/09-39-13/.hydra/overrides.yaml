@@ -1,0 +1,3 @@
+- env=metadrive_ma_roundabout
+- tot_time_steps=30
+- wandb.activate=false
