@@ -125,6 +125,8 @@ BASE_DEFAULT_CONFIG = dict(
         show_navigation_arrow=True,
         # If set to True, the vehicle will be in color green in top-down renderer or MARL setting
         use_special_color=False,
+        # Optional fixed RGB color in 0~1 range. If set, it overrides random/special palette selection.
+        fixed_color=None,
         # Clear wheel friction, so it can not move by setting steering and throttle/brake. Used for ReplayPolicy
         no_wheel_friction=False,
 

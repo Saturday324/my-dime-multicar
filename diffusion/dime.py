@@ -660,6 +660,17 @@ class DIME(OffPolicyAlgorithmJax):
         self.policy.actor_state = load_state(path, "actor_state", n_steps_actor, train_state=self.policy.actor_state)
         self.policy.qf_state = load_state(path, "critic_state", n_steps_critic, train_state=self.policy.qf_state)
 
+    def load_model_files(self, actor_path, critic_path):
+        """Load actor and critic from explicit file paths."""
+        with open(actor_path, 'rb') as f:
+            self.policy.actor_state = flax.serialization.from_bytes(
+                self.policy.actor_state, f.read(),
+            )
+        with open(critic_path, 'rb') as f:
+            self.policy.qf_state = flax.serialization.from_bytes(
+                self.policy.qf_state, f.read(),
+            )
+
 
 # Save and load model
 def save_model_state(train_state, path, name, n_steps):

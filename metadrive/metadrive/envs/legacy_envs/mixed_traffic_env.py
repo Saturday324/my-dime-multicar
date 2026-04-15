@@ -6,6 +6,8 @@ class MixedTrafficEnv(MetaDriveEnv):
     def default_config(cls) -> "Config":
         config = super(MixedTrafficEnv, cls).default_config()
         config["rl_agent_ratio"] = 0.0
+        config["traffic_policy"] = "mixed"
+        config["traffic_expert_ratio"] = None
         return config
 
     def setup_engine(self):

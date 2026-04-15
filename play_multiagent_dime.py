@@ -73,6 +73,7 @@ def parse_args():
         help="Optional mp4 path. If episodes>1, saves one file per episode with _epN suffix.",
     )
     parser.add_argument("--max-steps", type=int, default=None, help="Optional hard cap of rollout steps per episode.")
+    parser.add_argument("--allow-respawn", action="store_true", help="Allow vehicles to respawn after death.")
     parser.add_argument("--deterministic", action="store_true", help="Use deterministic policy output.")
     parser.add_argument(
         "--override",
@@ -109,7 +110,7 @@ def build_multiagent_env(cfg, args):
     env_kwargs = resolve_env_kwargs(getattr(cfg, "env_kwargs", None))
     env_kwargs = dict(env_kwargs)
     env_kwargs["use_render"] = args.render_mode == "human"
-    env_kwargs["allow_respawn"] = False
+    env_kwargs["allow_respawn"] = args.allow_respawn
 
     if args.num_agents is not None:
         env_kwargs["num_agents"] = int(args.num_agents)
@@ -183,18 +184,24 @@ def main():
     cfg = load_cfg(extra_overrides=args.override)
 
     critic_step = args.critic_step if args.critic_step is not None else args.actor_step
+
     actor_ckpt = os.path.join(args.checkpoint_dir, f"actor_state_{args.actor_step}.msgpack")
-    critic_ckpt = os.path.join(args.checkpoint_dir, f"critic_state_{critic_step}.msgpack")
     if not os.path.exists(actor_ckpt):
-        raise FileNotFoundError(f"Actor checkpoint not found: {actor_ckpt}")
+        actor_ckpt = os.path.join(args.checkpoint_dir, f"best_actor_{args.actor_step}.msgpack")
+    critic_ckpt = os.path.join(args.checkpoint_dir, f"critic_state_{critic_step}.msgpack")
     if not os.path.exists(critic_ckpt):
-        raise FileNotFoundError(f"Critic checkpoint not found: {critic_ckpt}")
+        critic_ckpt = os.path.join(args.checkpoint_dir, f"best_critic_{critic_step}.msgpack")
+
+    if not os.path.exists(actor_ckpt):
+        raise FileNotFoundError(f"Actor checkpoint not found: tried actor_state_{args.actor_step} and best_actor_{args.actor_step}")
+    if not os.path.exists(critic_ckpt):
+        raise FileNotFoundError(f"Critic checkpoint not found: tried critic_state_{critic_step} and best_critic_{critic_step}")
 
     env = build_multiagent_env(cfg, args)
     try:
         single_obs_space, single_action_space = _extract_single_agent_spaces(env)
         model = build_shared_model(cfg, single_obs_space, single_action_space)
-        model.load_model(args.checkpoint_dir, args.actor_step, critic_step)
+        model.load_model_files(actor_ckpt, critic_ckpt)
 
         print("Environment:", str(args.env_name if args.env_name is not None else cfg.env_name))
         print("Shared policy spaces:", single_obs_space, single_action_space)
@@ -219,6 +226,8 @@ def main():
             )
         start_seed = int(env.config.get("start_seed", cfg.seed))
 
+        all_success_rates = []
+
         for ep in range(args.episodes):
             frames = []
             episode_seed = start_seed + (ep % scenario_count)
@@ -226,13 +235,30 @@ def main():
             done_all = False
             ep_reward = 0.0
             ep_len = 0
+            ep_vehicle_ids = set(obs_dict.keys())
+            ep_success = 0
+            ep_crash = 0
 
             while not done_all:
                 actions = _predict_actions_for_all_agents(model, obs_dict, deterministic=args.deterministic)
-                obs_dict, reward_dict, terminated_dict, truncated_dict, _ = env.step(actions)
+                obs_dict, reward_dict, terminated_dict, truncated_dict, info_dict = env.step(actions)
                 done_all = bool(terminated_dict.get("__all__", False) or truncated_dict.get("__all__", False))
+                ep_vehicle_ids.update(obs_dict.keys())
                 ep_reward += sum(float(v) for v in reward_dict.values())
                 ep_len += 1
+
+                for agent_id, agent_info in info_dict.items():
+                    if agent_id == "__all__":
+                        continue
+                    agent_done = (
+                        terminated_dict.get(agent_id, False)
+                        or truncated_dict.get(agent_id, False)
+                    )
+                    if agent_done:
+                        if agent_info.get("arrive_dest", False):
+                            ep_success += 1
+                        if agent_info.get("crash", False):
+                            ep_crash += 1
 
                 if args.max_steps is not None and ep_len >= args.max_steps:
                     done_all = True
@@ -242,9 +268,14 @@ def main():
                     if args.video_path is not None and frame is not None:
                         frames.append(np.asarray(frame))
 
+            vehicle_count = max(len(ep_vehicle_ids), 1)
+            success_rate = ep_success / vehicle_count
+            all_success_rates.append(success_rate)
             print(
                 f"Episode {ep + 1}: group_reward={ep_reward:.3f}, "
-                f"length={ep_len}, alive_agents_end={len(obs_dict)}"
+                f"length={ep_len}, vehicles={vehicle_count}, "
+                f"success={ep_success}, crash={ep_crash}, "
+                f"success_rate={success_rate:.2%}"
             )
 
             if args.video_path is not None:
@@ -256,6 +287,11 @@ def main():
                 os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
                 imageio.mimsave(output_path, frames, fps=30)
                 print(f"Saved video to: {output_path}")
+
+        if all_success_rates:
+            avg_sr = sum(all_success_rates) / len(all_success_rates)
+            print(f"\n=== Summary ({args.episodes} episodes) ===")
+            print(f"Average success rate: {avg_sr:.2%}")
 
     finally:
         env.close()
@@ -279,4 +315,73 @@ python play_multiagent_dime.py \
   --render-mode rgb_array \
   --video-path "/workspace/diffusion-rl/DIME/videos/ma_eval.mp4" \
   --override env=metadrive_ma_roundabout
+
+python play_multiagent_dime.py \
+  --checkpoint-dir "/workspace/diffusion-rl/DIME/checkpoints/DIME_metadrive/MultiAgentRoundaboutEnv/lr0.0003/seed=0_start=20260322-112125" \
+  --actor-step 75000 \
+  --critic-step 75000 \
+  --episodes 3 \
+  --deterministic \
+  --render-mode rgb_array \
+  --video-path "/workspace/diffusion-rl/DIME/videos/ma_eval_step75000.mp4" \
+  --num-agents 30 \
+  --override env=metadrive_ma_roundabout
+
+
+python play_multiagent_dime.py \
+  --checkpoint-dir "/workspace/diffusion-rl/DIME/best_models/DIME_metadrive/MultiAgentRoundaboutEnv/lr0.0003/seed=0_start=20260324-054608 \
+  --actor-step 133867 \
+  --episodes 3 \
+  --deterministic \
+  --render-mode rgb_array \
+  --video-path "/workspace/diffusion-rl/DIME/videos/best_model_eval4.mp4" \
+  --override env=metadrive_ma_roundabout
+
+python play_multiagent_dime.py \
+  --checkpoint-dir "/workspace/diffusion-rl/DIME/best_models/DIME_metadrive/MultiAgentRoundaboutEnv/lr0.0003/seed=0_start=20260408-031638" \
+  --actor-step 113256 \
+  --episodes 3 \
+  --deterministic \
+  --render-mode rgb_array \
+  --video-path "/workspace/diffusion-rl/DIME/videos/best_model_eval4.mp4" \
+  --override env=metadrive_ma_roundabout
+
+python play_multiagent_dime.py \
+  --checkpoint-dir "/workspace/diffusion-rl/DIME/best_models/DIME_metadrive/MultiAgentRoundaboutEnv/lr0.0003/seed=0_start=20260324-054608" \
+  --actor-step 132528 \
+  --episodes 1 \
+  --max-steps 400 \
+  --deterministic \
+  --render-mode rgb_array \
+  --video-path "/workspace/diffusion-rl/DIME/videos/preview_in_ramp.mp4" \
+  --override env=metadrive_ma_in_ramp
+
+python play_multiagent_dime.py \
+  --checkpoint-dir "/workspace/diffusion-rl/DIME/best_models/DIME_metadrive/MultiAgentRoundaboutEnv/lr0.0003/seed=0_start=20260324-054608" \
+  --actor-step 132528 \
+  --episodes 1 \
+  --max-steps 400 \
+  --deterministic \
+  --render-mode rgb_array \
+  --video-path "/workspace/diffusion-rl/DIME/videos/preview_out_ramp.mp4" \
+  --override env=metadrive_ma_out_ramp
+
+cd /workspace/diffusion-rl/DIME
+
+python play_multiagent_dime.py \
+  --checkpoint-dir "/workspace/diffusion-rl/DIME/best_models/DIME_metadrive/MultiAgentRoundaboutEnv/lr0.0003/seed=0_start=20260408-081823" \
+  --actor-step 262221 \
+  --critic-step 262221 \
+  --episodes 1 \
+  --max-steps 500 \
+  --deterministic \
+  --render-mode rgb_array \
+  --video-path "/workspace/diffusion-rl/DIME/videos/roundabout_ckpt_on_ma_composed.mp4" \
+  --num-agents 20 \
+  --num-lasers 120 \
+  --num-others 6 \
+  --lidar-distance 50 \
+  --override env=metadrive_ma_composed \
+  --override env_kwargs.map=XTXTS \
+  --override env_kwargs.vehicle_config.lidar.add_others_navi=true
 '''

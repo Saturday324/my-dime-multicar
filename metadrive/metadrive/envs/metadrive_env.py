@@ -36,8 +36,10 @@ METADRIVE_DEFAULT_CONFIG = dict(
     # ===== Traffic =====
     traffic_density=0.1,
     need_inverse_traffic=False,
-    traffic_mode=TrafficMode.Trigger,  # "Respawn", "Trigger"
+    traffic_mode=TrafficMode.Trigger,  # "basic", "respawn", "resident", "trigger", "hybrid"
     random_traffic=False,  # Traffic is randomized at default.
+    traffic_policy="idm",  # "idm", "expert", "mixed"
+    traffic_expert_ratio=0.5,  # only used when traffic_policy == "mixed"
     # this will update the vehicle_config and set to traffic
     traffic_vehicle_config=dict(
         show_navi_mark=False,
@@ -46,6 +48,9 @@ METADRIVE_DEFAULT_CONFIG = dict(
         show_lidar=False,
         show_lane_line_detector=False,
         show_side_detector=False,
+        use_special_color=False,
+        random_color=False,
+        fixed_color=None,
     ),
 
     # ===== Object =====
@@ -77,6 +82,7 @@ METADRIVE_DEFAULT_CONFIG = dict(
     driving_reward=1.0,
     speed_reward=0.1,
     use_lateral_reward=False,
+    lateral_reward_min=0.5,
 
     # ===== Cost Scheme =====
     crash_vehicle_cost=1.0,
@@ -265,7 +271,8 @@ class MetaDriveEnv(BaseEnv):
 
         # reward for lane keeping, without it vehicle can learn to overtake but fail to keep in lane
         if self.config["use_lateral_reward"]:
-            lateral_factor = clip(1 - 2 * abs(lateral_now) / vehicle.navigation.get_current_lane_width(), 0.0, 1.0)
+            lat_min = float(self.config.get("lateral_reward_min", 0.0))
+            lateral_factor = clip(1 - 2 * abs(lateral_now) / vehicle.navigation.get_current_lane_width(), lat_min, 1.0)
         else:
             lateral_factor = 1.0
 

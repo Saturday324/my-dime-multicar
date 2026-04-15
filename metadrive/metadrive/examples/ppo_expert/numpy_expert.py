@@ -40,7 +40,14 @@ def expert(vehicle, deterministic=False, need_obs=False):
     global _expert_weights
     global _expert_observation
     expert_obs_cfg = dict(
-        lidar=dict(num_lasers=240, distance=50, num_others=4, gaussian_noise=0.0, dropout_prob=0.0),
+        lidar=dict(
+            num_lasers=240,
+            distance=50,
+            num_others=4,
+            add_others_navi=False,
+            gaussian_noise=0.0,
+            dropout_prob=0.0,
+        ),
         side_detector=dict(num_lasers=0, distance=50, gaussian_noise=0.0, dropout_prob=0.0),
         lane_line_detector=dict(num_lasers=0, distance=20, gaussian_noise=0.0, dropout_prob=0.0),
         random_agent_model=False

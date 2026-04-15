@@ -10,7 +10,9 @@ env_kwargs:
   horizon: 3000
 
   num_agents: 2
-  allow_respawn: false
+  allow_respawn: true
 
   traffic_density: 0.0
   random_traffic: false
+  traffic_policy: idm       # idm | expert | mixed
+  traffic_expert_ratio: 0.5 # used only when traffic_policy = mixed

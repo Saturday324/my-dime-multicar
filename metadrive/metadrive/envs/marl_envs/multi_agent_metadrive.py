@@ -1,4 +1,5 @@
 import copy
+import math
 from typing import Dict, Any
 
 from metadrive.component.pgblock.first_block import FirstPGBlock
@@ -53,6 +54,13 @@ MULTI_AGENT_METADRIVE_DEFAULT_CONFIG = dict(
     crash_vehicle_cost=1,
     crash_object_cost=1,
     out_of_road_cost=0,  # Do not count out of road into cost!
+
+    # ===== Proximity Penalty =====
+    proximity_penalty_enabled=True,
+    proximity_threshold=10.0,  # same-lane longitudinal penalty threshold (metres)
+    proximity_penalty_max=2.0,  # max longitudinal penalty
+    proximity_euclidean_threshold=1.5,  # any-direction close-range penalty threshold (metres)
+    proximity_euclidean_penalty_max=2.0,  # max close-range penalty
 
     # ===== Environmental Setting =====
     traffic_density=0.0,
@@ -110,6 +118,78 @@ class MultiAgentMetaDrive(MetaDriveEnv):
             ret_config["agent_configs"][config["prefer_track_agent"]]["use_special_color"] = True
         ret_config["vehicle_config"]["random_agent_model"] = ret_config["random_agent_model"]
         return ret_config
+
+    def _iter_proximity_vehicles(self, vehicle_id: str):
+        ego_vehicle = self.agents[vehicle_id]
+        seen_vehicle_ids = {getattr(ego_vehicle, "name", None) or getattr(ego_vehicle, "id", None) or id(ego_vehicle)}
+
+        for other_id, other in self.agents.items():
+            if other_id == vehicle_id:
+                continue
+            other_uid = getattr(other, "name", None) or getattr(other, "id", None) or id(other)
+            if other_uid in seen_vehicle_ids:
+                continue
+            seen_vehicle_ids.add(other_uid)
+            yield other
+
+        traffic_manager = getattr(self.engine, "traffic_manager", None)
+        if traffic_manager is None:
+            return
+
+        # Background traffic is maintained by the traffic manager, not env.agents.
+        for other in traffic_manager.traffic_vehicles:
+            other_uid = getattr(other, "name", None) or getattr(other, "id", None) or id(other)
+            if other_uid in seen_vehicle_ids:
+                continue
+            seen_vehicle_ids.add(other_uid)
+            yield other
+
+    def reward_function(self, vehicle_id: str):
+        reward, step_info = super(MultiAgentMetaDrive, self).reward_function(vehicle_id)
+
+        if self.config["proximity_penalty_enabled"]:
+            vehicle = self.agents[vehicle_id]
+            vx, vy = vehicle.position
+
+            long_threshold = self.config["proximity_threshold"]
+            long_penalty_max = self.config["proximity_penalty_max"]
+            euc_threshold = self.config["proximity_euclidean_threshold"]
+            euc_penalty_max = self.config["proximity_euclidean_penalty_max"]
+
+            min_long_dist = float("inf")
+            min_euc_dist = float("inf")
+            ego_lane = vehicle.lane
+            ego_long, _ = ego_lane.local_coordinates(vehicle.position)
+
+            for other in self._iter_proximity_vehicles(vehicle_id):
+                dx = other.position[0] - vx
+                dy = other.position[1] - vy
+                euc_d = math.sqrt(dx * dx + dy * dy)
+                if euc_d < min_euc_dist:
+                    min_euc_dist = euc_d
+                if other.lane_index == vehicle.lane_index:
+                    other_long, _ = ego_lane.local_coordinates(other.position)
+                    gap = abs(other_long - ego_long)
+                    if gap < min_long_dist:
+                        min_long_dist = gap
+
+            lane_penalty = 0.0
+            if min_long_dist < long_threshold:
+                lane_penalty = long_penalty_max * (1.0 - min_long_dist / long_threshold)
+
+            euc_penalty = 0.0
+            if min_euc_dist < euc_threshold:
+                euc_penalty = euc_penalty_max * (1.0 - min_euc_dist / euc_threshold)
+
+            total_penalty = max(lane_penalty, euc_penalty)
+            reward -= total_penalty
+            step_info["proximity_penalty"] = total_penalty
+            step_info["proximity_lane_penalty"] = lane_penalty
+            step_info["proximity_euclidean_penalty"] = euc_penalty
+            step_info["min_longitudinal_dist"] = min_long_dist
+            step_info["min_euclidean_dist"] = min_euc_dist
+
+        return reward, step_info
 
     def done_function(self, vehicle_id):
         done, done_info = super(MultiAgentMetaDrive, self).done_function(vehicle_id)

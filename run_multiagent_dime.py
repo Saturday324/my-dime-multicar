@@ -1,6 +1,8 @@
+import glob
 import os
 import time
 import traceback
+from collections import deque
 from typing import Dict, Tuple
 
 import gymnasium as gym
@@ -13,7 +15,7 @@ from omegaconf import DictConfig
 from stable_baselines3.common.logger import configure
 from tqdm.auto import tqdm
 
-from diffusion.dime import DIME
+from diffusion.dime import DIME, save_model_state
 from models.utils import is_slurm_job
 from common.multiagent_env_factory import create_multiagent_env
 
@@ -66,8 +68,10 @@ def _create_alg(cfg: DictConfig):
     run_id = f"seed={cfg.seed}_start={run_start}"
     tensorboard_log_dir = f"./logs/{cfg.wandb['group']}/{cfg.wandb['job_type']}/{run_id}/"
     model_save_dir = f"./checkpoints/{cfg.wandb['group']}/{cfg.wandb['job_type']}/{run_id}/"
+    best_model_dir = f"./best_models/{cfg.wandb['group']}/{cfg.wandb['job_type']}/{run_id}/"
     os.makedirs(tensorboard_log_dir, exist_ok=True)
     os.makedirs(model_save_dir, exist_ok=True)
+    os.makedirs(best_model_dir, exist_ok=True)
 
     model = DIME(
         policy_name,
@@ -80,7 +84,7 @@ def _create_alg(cfg: DictConfig):
     )
     # Keep metrics in files, avoid noisy terminal rollout tables.
     model.set_logger(configure(tensorboard_log_dir, ["csv", "tensorboard"]))
-    return model, ma_env
+    return model, ma_env, best_model_dir
 
 
 def _sample_actions(model: DIME, obs_dict: Dict[str, np.ndarray], learning_starts: int, action_space: gym.Space):
@@ -146,20 +150,32 @@ def _reset_multiagent_env(env, seed: int):
     return reset_ret, {}
 
 
-def _train_multiagent(model: DIME, env, cfg: DictConfig):
+def _train_multiagent(model: DIME, env, cfg: DictConfig, best_model_dir: str = ""):
     total_timesteps = int(cfg.tot_time_steps)
     log_freq = max(int(getattr(cfg, "log_freq", 100)), 1)
-    save_every_n_steps = int(getattr(cfg, "save_every_n_steps", 5000))
+    save_every_n_steps = int(getattr(cfg, "save_every_n_steps", 10000))
     next_save_step = save_every_n_steps if save_every_n_steps > 0 else None
+    max_checkpoints = int(getattr(cfg, "max_checkpoints", 10))
     learning_starts = int(cfg.alg.learning_starts)
     gradient_steps = int(cfg.alg.utd)
     train_freq = int(model.train_freq.frequency)
+
+    ckpt_steps_history: deque = deque(maxlen=max_checkpoints)
+
+    best_window = 10
+    recent_success_rates: list = []
+    best_mean_success_rate = float("-inf")
+    max_best_models = 3
+    best_model_steps: deque = deque(maxlen=max_best_models)
 
     episode_idx = 0
     obs_dict, _ = _reset_multiagent_env(env, seed=_next_episode_seed(env, episode_idx))
     episode_group_reward = 0.0
     episode_len = 0
     episode_agent_steps = 0
+    episode_vehicle_ids = set(obs_dict.keys())
+    episode_success_count = 0
+    episode_crash_count = 0
     env_steps = 0
     total_agent_steps = 0
     model.num_timesteps = 0
@@ -173,11 +189,16 @@ def _train_multiagent(model: DIME, env, cfg: DictConfig):
                 episode_group_reward = 0.0
                 episode_len = 0
                 episode_agent_steps = 0
+                episode_vehicle_ids = set(obs_dict.keys())
+                episode_success_count = 0
+                episode_crash_count = 0
                 continue
 
             actions = _sample_actions(model, obs_dict, learning_starts, model.action_space)
             next_obs_dict, reward_dict, terminated_dict, truncated_dict, info_dict = env.step(actions)
             done_all = bool(terminated_dict.get("__all__", False) or truncated_dict.get("__all__", False))
+            episode_vehicle_ids.update(obs_dict.keys())
+            episode_vehicle_ids.update(next_obs_dict.keys())
 
             added = _add_multiagent_transitions(
                 model,
@@ -189,6 +210,19 @@ def _train_multiagent(model: DIME, env, cfg: DictConfig):
                 truncated_dict=truncated_dict,
                 info_dict=info_dict,
             )
+
+            for agent_id, agent_info in info_dict.items():
+                if agent_id == "__all__":
+                    continue
+                agent_done = (
+                    terminated_dict.get(agent_id, False)
+                    or truncated_dict.get(agent_id, False)
+                )
+                if agent_done:
+                    if agent_info.get("arrive_dest", False):
+                        episode_success_count += 1
+                    if agent_info.get("crash", False):
+                        episode_crash_count += 1
 
             env_steps += 1
             pbar.update(1)
@@ -208,6 +242,16 @@ def _train_multiagent(model: DIME, env, cfg: DictConfig):
             if next_save_step is not None and env_steps >= next_save_step:
                 while next_save_step is not None and env_steps >= next_save_step:
                     model._save_model()
+                    if len(ckpt_steps_history) == max_checkpoints:
+                        old_step = ckpt_steps_history[0]
+                        for prefix in ("actor_state", "critic_state"):
+                            old_file = os.path.join(
+                                model.model_save_path,
+                                f"{prefix}_{old_step}.msgpack",
+                            )
+                            if os.path.exists(old_file):
+                                os.remove(old_file)
+                    ckpt_steps_history.append(env_steps)
                     next_save_step += save_every_n_steps
 
             if env_steps % log_freq == 0:
@@ -218,16 +262,66 @@ def _train_multiagent(model: DIME, env, cfg: DictConfig):
                 model.logger.dump(step=env_steps)
 
             if done_all:
+                episode_vehicle_count = max(len(episode_vehicle_ids), 1)
+                reward_per_vehicle = episode_group_reward / episode_vehicle_count
                 model.logger.record("rollout/episode_group_reward", episode_group_reward)
+                model.logger.record(
+                    "rollout/episode_group_reward_per_vehicle",
+                    reward_per_vehicle,
+                )
+                model.logger.record("rollout/episode_vehicle_count", episode_vehicle_count)
                 model.logger.record("rollout/episode_length", episode_len)
                 model.logger.record("rollout/episode_agent_steps", episode_agent_steps)
                 model.logger.record("rollout/episode_alive_agents_end", len(next_obs_dict))
+                model.logger.record("rollout/episode_success_count", episode_success_count)
+                model.logger.record("rollout/episode_crash_count", episode_crash_count)
+                model.logger.record(
+                    "rollout/episode_success_rate",
+                    episode_success_count / episode_vehicle_count,
+                )
+
+                ep_success_rate = episode_success_count / episode_vehicle_count
+                recent_success_rates.append(ep_success_rate)
+                if len(recent_success_rates) > best_window:
+                    recent_success_rates.pop(0)
+                if len(recent_success_rates) >= best_window and best_model_dir:
+                    mean_sr = sum(recent_success_rates) / len(recent_success_rates)
+                    model.logger.record("rollout/best_mean_success_rate", best_mean_success_rate)
+                    if mean_sr > best_mean_success_rate:
+                        best_mean_success_rate = mean_sr
+                        if len(best_model_steps) == max_best_models:
+                            old_step = best_model_steps[0]
+                            for prefix in ("actor_state", "critic_state"):
+                                old_file = os.path.join(
+                                    best_model_dir,
+                                    f"{prefix}_{old_step}.msgpack",
+                                )
+                                if os.path.exists(old_file):
+                                    os.remove(old_file)
+                        save_model_state(
+                            model.policy.actor_state, best_model_dir,
+                            "actor_state", env_steps,
+                        )
+                        save_model_state(
+                            model.policy.qf_state, best_model_dir,
+                            "critic_state", env_steps,
+                        )
+                        best_model_steps.append(env_steps)
+                        tqdm.write(
+                            f"[Best Model] mean_success_rate "
+                            f"({best_window} eps) = {mean_sr:.2%}  "
+                            f"-> saved to {best_model_dir} (step {env_steps})"
+                        )
+
                 model.logger.dump(step=env_steps)
                 episode_idx += 1
                 obs_dict, _ = _reset_multiagent_env(env, seed=_next_episode_seed(env, episode_idx))
                 episode_group_reward = 0.0
                 episode_len = 0
                 episode_agent_steps = 0
+                episode_vehicle_ids = set(obs_dict.keys())
+                episode_success_count = 0
+                episode_crash_count = 0
             else:
                 obs_dict = next_obs_dict
     finally:
@@ -259,9 +353,9 @@ def initialize_and_run(cfg):
             print(f"SLURM_JOB_ID: {os.environ.get('SLURM_JOB_ID')}")
             wandb.summary["SLURM_JOB_ID"] = os.environ.get("SLURM_JOB_ID")
 
-    model, env = _create_alg(cfg)
+    model, env, best_model_dir = _create_alg(cfg)
     try:
-        _train_multiagent(model, env, cfg)
+        _train_multiagent(model, env, cfg, best_model_dir=best_model_dir)
     finally:
         env.close()
         try:
@@ -299,4 +393,5 @@ if __name__ == "__main__":
     main()
 
 
-# python run_multiagent_dime.py env=metadrive_ma_roundabout tot_time_steps=300000 
+# python run_multiagent_dime.py env=metadrive_ma_roundabout tot_time_steps=1000000 
+# python run_multiagent_dime.py env=metadrive_ma_intersection tot_time_steps=500000

@@ -5,5 +5,6 @@ from metadrive.envs.scenario_env import ScenarioEnv
 from metadrive.envs.base_env import BaseEnv
 from metadrive.envs.marl_envs import (
     MultiAgentMetaDrive, MultiAgentTollgateEnv, MultiAgentBottleneckEnv, MultiAgentIntersectionEnv,
-    MultiAgentRoundaboutEnv, MultiAgentParkingLotEnv, MultiAgentTinyInter
+    MultiAgentRoundaboutEnv, MultiAgentParkingLotEnv, MultiAgentTinyInter, MultiAgentInRampEnv,
+    MultiAgentOutRampEnv, MultiAgentRampEnv, MultiAgentTIntersectionEnv
 )

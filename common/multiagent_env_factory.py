@@ -6,9 +6,14 @@ from common.env_factory import resolve_env_kwargs, try_import_env_registrations
 
 _MA_ENV_SHORTCUTS = {
     "metadrive/MultiAgentMetaDrive": "metadrive.envs.marl_envs.multi_agent_metadrive:MultiAgentMetaDrive",
+    "metadrive/MultiAgentComposedEnv": "metadrive.envs.marl_envs.marl_composed:MultiAgentComposedEnv",
     "metadrive/MultiAgentRoundaboutEnv": "metadrive.envs.marl_envs.marl_inout_roundabout:MultiAgentRoundaboutEnv",
     "metadrive/MultiAgentIntersectionEnv": "metadrive.envs.marl_envs.marl_intersection:MultiAgentIntersectionEnv",
+    "metadrive/MultiAgentTIntersectionEnv": "metadrive.envs.marl_envs.marl_t_intersection:MultiAgentTIntersectionEnv",
     "metadrive/MultiAgentBottleneckEnv": "metadrive.envs.marl_envs.marl_bottleneck:MultiAgentBottleneckEnv",
+    "metadrive/MultiAgentInRampEnv": "metadrive.envs.marl_envs.marl_ramp:MultiAgentInRampEnv",
+    "metadrive/MultiAgentOutRampEnv": "metadrive.envs.marl_envs.marl_ramp:MultiAgentOutRampEnv",
+    "metadrive/MultiAgentRampEnv": "metadrive.envs.marl_envs.marl_ramp:MultiAgentRampEnv",
     "metadrive/MultiAgentParkingLotEnv": "metadrive.envs.marl_envs.marl_parking_lot:MultiAgentParkingLotEnv",
     "metadrive/MultiAgentTollgateEnv": "metadrive.envs.marl_envs.marl_tollgate:MultiAgentTollgateEnv",
     "metadrive/MultiAgentBidirectionEnv": "metadrive.envs.marl_envs.marl_bidirection:MultiAgentBidirectionEnv",

@@ -12,18 +12,70 @@ env_kwargs:
   horizon: 1000
 
   # Multi-agent controls
-  num_agents: 8
+  num_agents: 20
   allow_respawn: false
+  delay_done: 5
 
   # Traffic controls
-  traffic_density: 0.0
-  random_traffic: false
+  traffic_density: 0.2
+  random_traffic: true
   need_inverse_traffic: false
-  traffic_mode: trigger
+  traffic_mode: resident      # basic | resident | trigger | respawn | hybrid
+  traffic_policy: expert       # idm | expert | mixed
+  traffic_expert_ratio: 0.5     # used only when traffic_policy = mixed
+  traffic_vehicle_config:
+    show_navi_mark: false
+    show_dest_mark: false
+    enable_reverse: false
+    show_lidar: false
+    show_lane_line_detector: false
+    show_side_detector: false
+    use_special_color: false
+    random_color: true
+    fixed_color: [0.45, 0.45, 0.45]  # background traffic: fixed gray
 
-  # Match current single-agent checkpoint observation shape (if reusing weights)
+  # ===== Reward weights =====
+  driving_reward: 1.0        # per-step forward progress reward
+  speed_reward: 0.1          # per-step speed reward (v / v_max)
+  use_lateral_reward: true    # lane-centering multiplier
+  lateral_reward_min: 0.5     # minimum lateral factor (0.0~1.0, floor during lane change)
+  success_reward: 10.0       # arrive at destination
+  out_of_road_penalty: 10.0  # drive off road
+  crash_vehicle_penalty: 5.0
+  crash_object_penalty: 5.0
+  crash_sidewalk_penalty: 0.0
+
+  # ===== Proximity penalty =====
+  proximity_penalty_enabled: true
+  # Same-lane longitudinal (front/rear following too close)
+  proximity_threshold: 6.0               # longitudinal penalty threshold (m)
+  proximity_penalty_max: 2.0             # max longitudinal penalty
+  # Euclidean close-range (any direction, prevents side-swipe)
+  proximity_euclidean_threshold: 1.5     # close-range penalty threshold (m)
+  proximity_euclidean_penalty_max: 2.0   # max close-range penalty
+
+  # ===== Termination controls =====
+  crash_done: true
+  out_of_road_done: true
+
+  # ===== Sensor config =====
   vehicle_config:
+    use_special_color: false  # controlled agents: random colors
+    random_color: true
     lidar:
-      num_lasers: 240
-      num_others: 0
+      num_lasers: 120         # number of lidar rays (360 deg)
+      distance: 50           # max sensing distance (m)
+      num_others: 6         # number of nearest vehicles to include
+      add_others_navi: true  # include neighbors' navigation checkpoints
+      gaussian_noise: 0.0    # noise added to lidar points
+      dropout_prob: 0.0      # probability of dropping a lidar point
+    side_detector:
+      num_lasers: 0          # road-border detector rays (0 = use analytic dist)
       distance: 50
+      gaussian_noise: 0.0
+      dropout_prob: 0.0
+    lane_line_detector:
+      num_lasers: 0          # lane-line detector rays (0 = use analytic offset)
+      distance: 20
+      gaussian_noise: 0.0
+      dropout_prob: 0.0

@@ -1,7 +1,8 @@
 #@package _global_
-# Multi-agent intersection profile.
-# Keep this separate from single-agent `env=metadrive_intersection`.
-env_name: metadrive/MultiAgentIntersectionEnv
+# Multi-agent composed-block MetaDrive profile.
+# This environment stitches several MetaDrive blocks together with `env_kwargs.map`
+# and spawns agents from entrances collected across all sub-blocks.
+env_name: metadrive/MultiAgentComposedEnv
 eval_enabled: false
 
 env_kwargs:
@@ -11,18 +12,26 @@ env_kwargs:
   num_scenarios: 1
   horizon: 1000
 
+  # Map composition
+  # Override this from CLI to compose different scenes, for example:
+  #   env_kwargs.map=CrXROSTR
+  map: XTXTS
+  map_config:
+    exit_length: 60
+    lane_num: 2
+
   # Multi-agent controls
-  num_agents: 15
+  num_agents: 20
   allow_respawn: true
-  delay_done: 5              # keep terminated vehicles briefly before recycling
+  delay_done: 5
 
   # Traffic controls
   traffic_density: 0.1
   random_traffic: false
   need_inverse_traffic: false
-  traffic_mode: trigger       # basic | resident | trigger | respawn | hybrid
-  traffic_policy: expert         # idm | expert | mixed
-  traffic_expert_ratio: 0.5   # used only when traffic_policy = mixed
+  traffic_mode: basic        # basic | resident | trigger | respawn | hybrid
+  traffic_policy: expert     # idm | expert | mixed
+  traffic_expert_ratio: 0.5  # used only when traffic_policy = mixed
   traffic_vehicle_config:
     show_navi_mark: false
     show_dest_mark: false
@@ -31,7 +40,7 @@ env_kwargs:
     show_lane_line_detector: false
     show_side_detector: false
     use_special_color: false
-    random_color: false
+    random_color: true
     fixed_color: [0.45, 0.45, 0.45]
 
   # ===== Reward weights =====
@@ -41,13 +50,13 @@ env_kwargs:
   lateral_reward_min: 0.5
   success_reward: 10.0
   out_of_road_penalty: 10.0
-  crash_vehicle_penalty: 10.0
-  crash_object_penalty: 10.0
+  crash_vehicle_penalty: 5.0
+  crash_object_penalty: 5.0
   crash_sidewalk_penalty: 0.0
 
   # ===== Proximity penalty =====
   proximity_penalty_enabled: true
-  proximity_threshold: 6.0
+  proximity_threshold: 10.0
   proximity_penalty_max: 2.0
   proximity_euclidean_threshold: 1.5
   proximity_euclidean_penalty_max: 2.0
@@ -61,9 +70,9 @@ env_kwargs:
     use_special_color: false
     random_color: true
     lidar:
-      num_lasers: 120
+      num_lasers: 72
       distance: 50
-      num_others: 6          # changing this changes observation shape
+      num_others: 4
       add_others_navi: true
       gaussian_noise: 0.0
       dropout_prob: 0.0
@@ -77,9 +86,3 @@ env_kwargs:
       distance: 20
       gaussian_noise: 0.0
       dropout_prob: 0.0
-
-  # Scene-specific map config
-  map_config:
-    exit_length: 60
-    lane_num: 2
-    # radius: null            # optional custom intersection radius

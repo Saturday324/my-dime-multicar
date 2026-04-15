@@ -1018,6 +1018,10 @@ class BaseVehicle(BaseObject, BaseVehicleState):
 
     @property
     def panda_color(self):
+        fixed_color = self.config.get("fixed_color", None)
+        if fixed_color is not None:
+            return tuple(float(np.clip(v, 0.0, 1.0)) for v in fixed_color)
+
         c = super(BaseVehicle, self).panda_color
         if self._use_special_color:
             color = get_color_palette()
