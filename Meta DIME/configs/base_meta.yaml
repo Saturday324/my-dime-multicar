@@ -1,0 +1,27 @@
+#@package _global_
+defaults:
+  - alg: dime
+  - sampler: dis
+  - meta: pearl
+  - taskset: metadrive_ma_5env
+  - setup
+  - _self_
+
+seed: 0
+env_name: metadrive_meta
+use_jit: true
+tot_time_steps: 1e6
+log_freq: 100
+save_every_n_steps: 5000
+step_size: ${alg.optimizer.lr_actor}
+step_size_betas: ${alg.optimizer.lr_actor}
+use_path_gradient: False
+use_target_score: False
+dt: 0.1
+learn_dt: True
+per_step_dt: False
+per_dim_friction: True
+use_step_size_scheduler: False
+warmup: const
+iters: ${tot_time_steps}
+warmup_iters: 60_000

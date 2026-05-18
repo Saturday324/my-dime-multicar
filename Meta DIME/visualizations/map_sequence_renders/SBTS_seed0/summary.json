@@ -1,0 +1,33 @@
+{
+  "map_sequence": "SBTS",
+  "env_name": "metadrive/MultiAgentComposedEnv",
+  "seed": 0,
+  "num_scenarios": 1,
+  "num_agents": 12,
+  "traffic_mode": "basic",
+  "traffic_density": 0.0,
+  "traffic_policy": "idm",
+  "scene_steps": 0,
+  "active_agents": 12,
+  "obs_agents": 12,
+  "traffic_vehicles": 0,
+  "spawn_roads_count": 2,
+  "spawn_roads": [
+    {
+      "start": ">>",
+      "end": ">>>"
+    },
+    {
+      "start": "-3T0_1_",
+      "end": "-3T0_0_"
+    }
+  ],
+  "destinations": [
+    "->>",
+    "3T0_1_"
+  ],
+  "files": {
+    "map": "/workspace/diffusion-rl/DIME/visualizations/map_sequence_renders/SBTS_seed0/map.png",
+    "scene": "/workspace/diffusion-rl/DIME/visualizations/map_sequence_renders/SBTS_seed0/scene.png"
+  }
+}

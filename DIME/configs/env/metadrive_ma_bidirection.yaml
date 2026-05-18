@@ -1,0 +1,41 @@
+#@package _global_
+# Multi-agent bidirection profile.
+env_name: metadrive/MultiAgentBidirectionEnv
+eval_enabled: false
+
+env_kwargs:
+  use_render: false
+  start_seed: 0
+  num_scenarios: 1
+  horizon: 1000
+
+  num_agents: 8
+  allow_respawn: true
+  use_lateral: false
+
+  traffic_density: 0.0
+  random_traffic: false
+  traffic_policy: idm       # idm | expert | mixed
+  traffic_expert_ratio: 0.5 # used only when traffic_policy = mixed
+
+  # ===== Sensor config =====
+  vehicle_config:
+    use_special_color: false
+    random_color: true
+    lidar:
+      num_lasers: 120
+      distance: 50
+      num_others: 6
+      add_others_navi: true
+      gaussian_noise: 0.0
+      dropout_prob: 0.0
+    side_detector:
+      num_lasers: 0
+      distance: 50
+      gaussian_noise: 0.0
+      dropout_prob: 0.0
+    lane_line_detector:
+      num_lasers: 0
+      distance: 20
+      gaussian_noise: 0.0
+      dropout_prob: 0.0

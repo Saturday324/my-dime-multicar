@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meta-DIME × TAVT 融合框架图</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #0d1b2f;
+      --card: #122743;
+      --card-2: #162f50;
+      --line: #355f93;
+      --text: #edf5ff;
+      --muted: #acc2df;
+      --blue: #63b3ff;
+      --cyan: #67e8f9;
+      --green: #7ee787;
+      --orange: #ffbd7a;
+      --pink: #ff8db7;
+      --purple: #c7a7ff;
+      --red: #ff7b72;
+      --shadow: 0 20px 55px rgba(0, 0, 0, 0.34);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(99, 179, 255, 0.20), transparent 35%),
+        radial-gradient(circle at 88% 18%, rgba(199, 167, 255, 0.18), transparent 34%),
+        linear-gradient(135deg, #07111f 0%, #0b1730 48%, #07111f 100%);
+      line-height: 1.65;
+    }
+
+    .wrap {
+      width: min(1280px, 94vw);
+      margin: 0 auto;
+      padding: 34px 0 64px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1.45fr 0.8fr;
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 22px;
+    }
+
+    .hero,
+    section {
+      border: 1px solid rgba(103, 232, 249, 0.16);
+      background: linear-gradient(180deg, rgba(18, 39, 67, 0.92), rgba(13, 27, 47, 0.92));
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 30px 32px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: 1.1;
+      letter-spacing: -0.8px;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 25px;
+      letter-spacing: -0.2px;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    p {
+      margin: 0;
+      color: #d7e7fb;
+    }
+
+    .lead {
+      max-width: 860px;
+      font-size: 17px;
+      color: #cbe1fb;
+    }
+
+    .side {
+      padding: 24px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 189, 122, 0.18);
+      background: linear-gradient(180deg, rgba(255, 189, 122, 0.12), rgba(18, 39, 67, 0.84));
+      box-shadow: var(--shadow);
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: rgba(99, 179, 255, 0.12);
+      border: 1px solid rgba(99, 179, 255, 0.26);
+      color: #dff0ff;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .tag.orange {
+      background: rgba(255, 189, 122, 0.12);
+      border-color: rgba(255, 189, 122, 0.3);
+    }
+
+    .tag.green {
+      background: rgba(126, 231, 135, 0.11);
+      border-color: rgba(126, 231, 135, 0.28);
+    }
+
+    section {
+      margin-top: 22px;
+      padding: 24px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      min-height: 100%;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(99, 179, 255, 0.16);
+      background: linear-gradient(180deg, rgba(22, 47, 80, 0.92), rgba(18, 39, 67, 0.86));
+    }
+
+    .card strong {
+      color: #ffffff;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .key {
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    .formula {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(103, 232, 249, 0.18);
+      background: rgba(7, 17, 31, 0.42);
+      font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+      color: #e9fbff;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .diagram {
+      overflow-x: auto;
+      border-radius: 18px;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        rgba(7, 17, 31, 0.45);
+      background-size: 32px 32px;
+      border: 1px solid rgba(103, 232, 249, 0.12);
+      padding: 14px;
+    }
+
+    svg {
+      display: block;
+      min-width: 1080px;
+      width: 100%;
+      height: auto;
+    }
+
+    .node {
+      filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.28));
+    }
+
+    .node-title {
+      font-size: 15px;
+      font-weight: 800;
+      fill: #ffffff;
+    }
+
+    .node-text {
+      font-size: 12px;
+      fill: #d7e7fb;
+    }
+
+    .small-text {
+      font-size: 11px;
+      fill: #b8cceb;
+    }
+
+    .lane-title {
+      font-size: 15px;
+      font-weight: 800;
+      fill: #9be8ff;
+      letter-spacing: 0.4px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      display: inline-block;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: -1px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      counter-reset: step;
+    }
+
+    .step {
+      position: relative;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(7, 17, 31, 0.42);
+      border: 1px solid rgba(103, 232, 249, 0.14);
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 10px;
+      border-radius: 50%;
+      color: #06111f;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--cyan), var(--green));
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid rgba(99, 179, 255, 0.16);
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(99, 179, 255, 0.12);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: #ffffff;
+      background: rgba(99, 179, 255, 0.12);
+    }
+
+    td {
+      color: #d7e7fb;
+      background: rgba(7, 17, 31, 0.28);
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .note {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 189, 122, 0.24);
+      background: rgba(255, 189, 122, 0.09);
+      color: #ffe1bd;
+    }
+
+    @media (max-width: 980px) {
+      header,
+      .two-col,
+      .three-col,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        color: #111827;
+      }
+
+      .hero,
+      .side,
+      section {
+        background: #ffffff;
+        box-shadow: none;
+        border-color: #cbd5e1;
+        break-inside: avoid;
+      }
+
+      p,
+      td,
+      .muted {
+        color: #1f2937;
+      }
+
+      .diagram {
+        background: #f8fafc;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="hero">
+        <h1>Meta-DIME × TAVT 融合框架</h1>
+        <p class="lead">
+          目标是在 Meta-RL 中同时获得两类能力：Meta-DIME 的上下文条件扩散策略与多任务快速适应能力，
+          以及 TAVT 面向 OOD 任务的虚拟任务生成、任务表示约束和状态正则能力。
+        </p>
+        <div class="tag-row">
+          <span class="tag">Context Encoder q(z|c)</span>
+          <span class="tag">Diffusion Policy πθ(a|s,z)</span>
+          <span class="tag green">Virtual Task zα</span>
+          <span class="tag orange">Task Decoder p(r,s'|s,a,z)</span>
+          <span class="tag">Multi-Agent MetaDrive</span>
+        </div>
+      </div>
+      <aside class="side">
+        <h2>一句话概括</h2>
+        <p>
+          用 TAVT 在任务潜变量空间中构造“可解释的虚拟任务”，再把真实任务和虚拟任务同时送入
+          Meta-DIME 的扩散 actor-critic 更新，使策略不仅会根据上下文适应任务，还能覆盖训练分布外的任务变化。
+        </p>
+      </aside>
+    </header>
+
+    <section>
+      <h2>1. 融合后的总体框架图</h2>
+      <div class="diagram" aria-label="Meta-DIME 与 TAVT 融合框架图">
+        <svg viewBox="0 0 1180 690" role="img">
+          <defs>
+            <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+              <path d="M2,2 L10,6 L2,10 Z" fill="#7dd3fc"></path>
+            </marker>
+            <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+              <path d="M2,2 L10,6 L2,10 Z" fill="#ffbd7a"></path>
+            </marker>
+            <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+              <path d="M2,2 L10,6 L2,10 Z" fill="#7ee787"></path>
+            </marker>
+            <linearGradient id="blueBox" x1="0" x2="1">
+              <stop offset="0%" stop-color="#153d69"></stop>
+              <stop offset="100%" stop-color="#1d5b8f"></stop>
+            </linearGradient>
+            <linearGradient id="greenBox" x1="0" x2="1">
+              <stop offset="0%" stop-color="#124734"></stop>
+              <stop offset="100%" stop-color="#1d6a49"></stop>
+            </linearGradient>
+            <linearGradient id="orangeBox" x1="0" x2="1">
+              <stop offset="0%" stop-color="#5a371a"></stop>
+              <stop offset="100%" stop-color="#8a5526"></stop>
+            </linearGradient>
+            <linearGradient id="purpleBox" x1="0" x2="1">
+              <stop offset="0%" stop-color="#3b2b62"></stop>
+              <stop offset="100%" stop-color="#5d45a0"></stop>
+            </linearGradient>
+            <linearGradient id="pinkBox" x1="0" x2="1">
+              <stop offset="0%" stop-color="#5a2140"></stop>
+              <stop offset="100%" stop-color="#8d3565"></stop>
+            </linearGradient>
+          </defs>
+
+          <text x="34" y="38" class="lane-title">真实任务交互层</text>
+          <text x="34" y="258" class="lane-title">任务表示与虚拟任务层</text>
+          <text x="34" y="485" class="lane-title">Meta-DIME 扩散控制层</text>
+
+          <rect x="20" y="55" width="1140" height="166" rx="24" fill="rgba(99,179,255,0.05)" stroke="rgba(99,179,255,0.18)"></rect>
+          <rect x="20" y="275" width="1140" height="166" rx="24" fill="rgba(126,231,135,0.05)" stroke="rgba(126,231,135,0.18)"></rect>
+          <rect x="20" y="502" width="1140" height="150" rx="24" fill="rgba(199,167,255,0.05)" stroke="rgba(199,167,255,0.18)"></rect>
+
+          <g class="node">
+            <rect x="58" y="88" width="168" height="92" rx="16" fill="url(#blueBox)" stroke="#63b3ff"></rect>
+            <text x="82" y="122" class="node-title">任务集合 T</text>
+            <text x="82" y="148" class="node-text">MetaDrive 场景/地图</text>
+            <text x="82" y="168" class="node-text">train tasks + OOD tasks</text>
+          </g>
+
+          <g class="node">
+            <rect x="286" y="88" width="182" height="92" rx="16" fill="url(#blueBox)" stroke="#63b3ff"></rect>
+            <text x="310" y="122" class="node-title">多智能体交互</text>
+            <text x="310" y="148" class="node-text">每个 agent 采样轨迹</text>
+            <text x="310" y="168" class="node-text">(s, a, r, s', done)</text>
+          </g>
+
+          <g class="node">
+            <rect x="530" y="88" width="190" height="92" rx="16" fill="url(#blueBox)" stroke="#63b3ff"></rect>
+            <text x="554" y="122" class="node-title">Task Replay Buffer</text>
+            <text x="554" y="148" class="node-text">按 task_id 存储上下文</text>
+            <text x="554" y="168" class="node-text">context/query 分离采样</text>
+          </g>
+
+          <g class="node">
+            <rect x="800" y="88" width="216" height="92" rx="16" fill="url(#blueBox)" stroke="#63b3ff"></rect>
+            <text x="824" y="122" class="node-title">在线任务上下文 c</text>
+            <text x="824" y="148" class="node-text">少量历史 transition</text>
+            <text x="824" y="168" class="node-text">用于快速后验推断</text>
+          </g>
+
+          <path d="M226 134 H286" stroke="#7dd3fc" stroke-width="2.5" marker-end="url(#arrow)"></path>
+          <path d="M468 134 H530" stroke="#7dd3fc" stroke-width="2.5" marker-end="url(#arrow)"></path>
+          <path d="M720 134 H800" stroke="#7dd3fc" stroke-width="2.5" marker-end="url(#arrow)"></path>
+
+          <g class="node">
+            <rect x="70" y="306" width="204" height="102" rx="16" fill="url(#greenBox)" stroke="#7ee787"></rect>
+            <text x="94" y="340" class="node-title">Context Encoder ψ</text>
+            <text x="94" y="366" class="node-text">qφ(z|c) = N(μ, σ²)</text>
+            <text x="94" y="386" class="node-text">输出任务潜变量 z</text>
+          </g>
+
+          <g class="node">
+            <rect x="332" y="306" width="224" height="102" rx="16" fill="url(#greenBox)" stroke="#7ee787"></rect>
+            <text x="356" y="340" class="node-title">TAVT 表示约束</text>
+            <text x="356" y="366" class="node-text">同任务一致性 + bisimulation</text>
+            <text x="356" y="386" class="node-text">on/off-policy 表示对齐</text>
+          </g>
+
+          <g class="node">
+            <rect x="614" y="306" width="228" height="102" rx="16" fill="url(#orangeBox)" stroke="#ffbd7a"></rect>
+            <text x="638" y="340" class="node-title">虚拟任务生成</text>
+            <text x="638" y="366" class="node-text">zα = Σ αi zi, α~Dirichlet</text>
+            <text x="638" y="386" class="node-text">覆盖任务分布间隙/OOD</text>
+          </g>
+
+          <g class="node">
+            <rect x="900" y="306" width="210" height="102" rx="16" fill="url(#orangeBox)" stroke="#ffbd7a"></rect>
+            <text x="924" y="340" class="node-title">Task Decoder</text>
+            <text x="924" y="366" class="node-text">pη(r, s' | s, a, zα)</text>
+            <text x="924" y="386" class="node-text">生成虚拟 reward/next state</text>
+          </g>
+
+          <path d="M908 180 C908 232 172 248 172 306" stroke="#7ee787" stroke-width="2.5" fill="none" marker-end="url(#arrow-green)"></path>
+          <path d="M274 357 H332" stroke="#7ee787" stroke-width="2.5" marker-end="url(#arrow-green)"></path>
+          <path d="M556 357 H614" stroke="#ffbd7a" stroke-width="2.5" marker-end="url(#arrow-orange)"></path>
+          <path d="M842 357 H900" stroke="#ffbd7a" stroke-width="2.5" marker-end="url(#arrow-orange)"></path>
+
+          <g class="node">
+            <rect x="74" y="530" width="210" height="86" rx="16" fill="url(#purpleBox)" stroke="#c7a7ff"></rect>
+            <text x="98" y="562" class="node-title">状态增强</text>
+            <text x="98" y="588" class="node-text">ŝ = concat(s, z 或 zα)</text>
+          </g>
+
+          <g class="node">
+            <rect x="354" y="530" width="222" height="86" rx="16" fill="url(#purpleBox)" stroke="#c7a7ff"></rect>
+            <text x="378" y="562" class="node-title">Diffusion Actor</text>
+            <text x="378" y="588" class="node-text">πθ(a | ŝ), 迭代去噪生成动作</text>
+          </g>
+
+          <g class="node">
+            <rect x="646" y="530" width="214" height="86" rx="16" fill="url(#purpleBox)" stroke="#c7a7ff"></rect>
+            <text x="670" y="562" class="node-title">Distributional Critic</text>
+            <text x="670" y="588" class="node-text">Qψ(ŝ, a) + target projection</text>
+          </g>
+
+          <g class="node">
+            <rect x="930" y="530" width="184" height="86" rx="16" fill="url(#pinkBox)" stroke="#ff8db7"></rect>
+            <text x="954" y="562" class="node-title">联合更新</text>
+            <text x="954" y="588" class="node-text">真实 RL + 虚拟 RL + 表示损失</text>
+          </g>
+
+          <path d="M172 408 C172 460 179 486 179 530" stroke="#7ee787" stroke-width="2.5" fill="none" marker-end="url(#arrow-green)"></path>
+          <path d="M1005 408 C1005 465 234 468 179 530" stroke="#ffbd7a" stroke-width="2.5" fill="none" marker-end="url(#arrow-orange)"></path>
+          <path d="M284 573 H354" stroke="#c7a7ff" stroke-width="2.5" marker-end="url(#arrow)"></path>
+          <path d="M576 573 H646" stroke="#c7a7ff" stroke-width="2.5" marker-end="url(#arrow)"></path>
+          <path d="M860 573 H930" stroke="#ff8db7" stroke-width="2.5" marker-end="url(#arrow-orange)"></path>
+
+          <path d="M465 530 C458 472 404 442 404 408" stroke="#c7a7ff" stroke-dasharray="6 7" stroke-width="2.3" fill="none" marker-end="url(#arrow)"></path>
+          <path d="M1022 530 C1028 470 1022 438 1005 408" stroke="#ffbd7a" stroke-dasharray="6 7" stroke-width="2.3" fill="none" marker-end="url(#arrow-orange)"></path>
+
+          <text x="440" y="478" class="small-text">critic loss 反向塑造 z 的任务可辨识性</text>
+          <text x="918" y="470" class="small-text">WGAN / cycle / state regularization 保证虚拟转移可信</text>
+        </svg>
+      </div>
+      <div class="legend">
+        <span><i class="dot" style="background:#63b3ff"></i>真实交互数据</span>
+        <span><i class="dot" style="background:#7ee787"></i>任务表示学习</span>
+        <span><i class="dot" style="background:#ffbd7a"></i>TAVT 虚拟任务生成</span>
+        <span><i class="dot" style="background:#c7a7ff"></i>Meta-DIME 扩散 actor-critic</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>2. 两个方法如何融合</h2>
+      <div class="three-col">
+        <div class="card">
+          <h3>Meta-DIME 保留的核心</h3>
+          <p>
+            使用上下文编码器从任务轨迹中得到 <span class="key">z</span>，将 z 拼接到观测上，形成
+            <strong>任务条件扩散策略</strong> 和 critic 输入。策略不直接输出动作分布参数，而是通过扩散采样生成动作。
+          </p>
+          <div class="formula">πθ(a|s,z) = DiffusionDenoiseθ(s ⊕ z, ε)</div>
+        </div>
+        <div class="card">
+          <h3>TAVT 注入的核心</h3>
+          <p>
+            在潜变量空间中对多个任务表示做 Dirichlet 混合，得到虚拟任务 <span class="key">zα</span>。
+            通过 task decoder 预测虚拟任务的 reward 和 next state，再用判别器、循环一致性和状态正则约束其真实性。
+          </p>
+          <div class="formula">zα = α1z1 + ... + αMzM, α ~ Dirichlet(1)</div>
+        </div>
+        <div class="card">
+          <h3>融合后的训练对象</h3>
+          <p>
+            每次更新同时包含真实任务 batch 和虚拟任务 batch。真实 batch 训练基础适应能力，
+            虚拟 batch 扩展任务覆盖范围，让扩散策略在未见任务附近也能学习稳定动作生成。
+          </p>
+          <div class="formula">L = Lreal-DIME + λvt Lvirtual-DIME + Lrep + Ldecoder</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>3. 训练流程图</h2>
+      <div class="flow">
+        <div class="step">
+          <h3>采集多任务轨迹</h3>
+          <p>在多个 MetaDrive 训练任务中采样多智能体 transition，并按 task_id 写入 replay buffer。</p>
+        </div>
+        <div class="step">
+          <h3>推断真实任务 z</h3>
+          <p>从每个任务采样 context，经过 qφ(z|c) 得到任务后验；query batch 用于 actor-critic 更新。</p>
+        </div>
+        <div class="step">
+          <h3>构造虚拟任务 zα</h3>
+          <p>从 M 个任务表示中做 Dirichlet 混合，生成位于任务间隙或 OOD 边界附近的任务表示。</p>
+        </div>
+        <div class="step">
+          <h3>生成虚拟转移</h3>
+          <p>task decoder 根据 (s,a,zα) 预测 rα 和 s'α，并用判别器/循环一致性过滤不可信虚拟样本。</p>
+        </div>
+        <div class="step">
+          <h3>联合优化扩散策略</h3>
+          <p>真实 transition 和虚拟 transition 同时更新 diffusion actor、distributional critic 与 context encoder。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>4. 模块对应关系</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>模块</th>
+            <th>来自 Meta-DIME</th>
+            <th>来自 TAVT</th>
+            <th>融合后的作用</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>任务上下文编码</td>
+            <td>ContextEncoder 输入 (s,a,r,s',done)，输出 μ/logvar/z。</td>
+            <td>PEARL 风格 ψ 编码器、on/off policy 表示缓冲。</td>
+            <td>统一为 qφ(z|c)，同时服务快速适应和虚拟任务构造。</td>
+          </tr>
+          <tr>
+            <td>策略模型</td>
+            <td>Diffusion policy 通过去噪过程生成连续动作。</td>
+            <td>原 TAVT 使用 SAC actor。</td>
+            <td>将 TAVT 的虚拟任务训练信号接入 Meta-DIME 的 diffusion actor。</td>
+          </tr>
+          <tr>
+            <td>虚拟任务</td>
+            <td>原 Meta-DIME 主要在已有任务后验上训练。</td>
+            <td>Dirichlet 混合 zα，生成未观测任务表示。</td>
+            <td>扩展训练任务覆盖范围，提升 OOD 泛化。</td>
+          </tr>
+          <tr>
+            <td>动力学/奖励建模</td>
+            <td>critic 通过 Bellman target 学习价值。</td>
+            <td>task decoder 学习 p(r,s'|s,a,z)。</td>
+            <td>为虚拟任务提供可训练的 reward 和 next state。</td>
+          </tr>
+          <tr>
+            <td>稳定性约束</td>
+            <td>分布式 critic、target network、entropy cost。</td>
+            <td>bisimulation、same-task、on/off alignment、WGAN、state regularization。</td>
+            <td>避免虚拟任务漂移，降低状态变化任务中的价值高估。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>5. 损失函数设计</h2>
+      <div class="two-col">
+        <div class="card">
+          <h3>真实任务 Meta-DIME 损失</h3>
+          <p>
+            对真实 query transition 计算 distributional Bellman target，并更新 critic；
+            diffusion actor 通过 critic 指导生成低代价、高价值动作；context encoder 由 critic loss、KL 和任务分类辅助损失共同训练。
+          </p>
+          <div class="formula">Lreal = Lcritic(s,z,a,r,s') + Lactor-diff + βKL(qφ(z|c)||N(0,I)) + γLtask-cls</div>
+        </div>
+        <div class="card">
+          <h3>TAVT 虚拟任务损失</h3>
+          <p>
+            虚拟任务损失由表示约束、解码器重构、对抗一致性、循环一致性和虚拟 Bellman 误差组成。
+            其中 state regularization 可把预测 next state 与真实 next state 加权，缓解虚拟状态过远导致的 Q 过估计。
+          </p>
+          <div class="formula">Lvt = Lrecon + λbisimLbisim + λwganLadv + λcycleLcycle + λQ Lvirtual-Q + λregLstate-reg</div>
+        </div>
+      </div>
+      <p class="note">
+        报告中可以强调：TAVT 并不是替换 Meta-DIME，而是给 Meta-DIME 增加“任务空间数据增强”和“虚拟任务约束”。
+        因此最终优势来自扩散策略的强表达能力与任务潜变量空间的 OOD 扩展能力叠加。
+      </p>
+    </section>
+
+    <section>
+      <h2>6. 推理/测试阶段</h2>
+      <div class="two-col">
+        <div class="card">
+          <h3>无上下文或冷启动</h3>
+          <p>
+            使用 prior z=0 或从训练任务表示缓冲中采样初始化。此时 diffusion policy 生成的是任务无关的保守动作。
+          </p>
+        </div>
+        <div class="card">
+          <h3>少量交互后快速适应</h3>
+          <p>
+            将最近 K 步 transition 输入 context encoder 得到 posterior z，再用 πθ(a|s,z) 执行动作。
+            若遇到 OOD 任务，TAVT 训练过的虚拟 zα 会让策略对任务间插值/外推更稳健。
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

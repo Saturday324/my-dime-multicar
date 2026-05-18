@@ -1,0 +1,13 @@
+__pycache__
+.idea
+**.log
+logs/
+wandb/
+eval_logs/
+outputs/
+checkpoints/
+best_models/
+videos/
+*.msgpack
+*.mp4
+*.pyc

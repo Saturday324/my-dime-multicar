@@ -1,0 +1,85 @@
+#@package _global_
+# Multi-agent intersection profile.
+# Keep this separate from single-agent `env=metadrive_intersection`.
+env_name: metadrive/MultiAgentIntersectionEnv
+eval_enabled: false
+
+env_kwargs:
+  # Core runtime
+  use_render: false
+  start_seed: 0
+  num_scenarios: 1
+  horizon: 1000
+
+  # Multi-agent controls
+  num_agents: 15
+  allow_respawn: true
+  delay_done: 5              # keep terminated vehicles briefly before recycling
+
+  # Traffic controls
+  traffic_density: 0.1
+  random_traffic: false
+  need_inverse_traffic: false
+  traffic_mode: trigger       # basic | resident | trigger | respawn | hybrid
+  traffic_policy: expert         # idm | expert | mixed
+  traffic_expert_ratio: 0.5   # used only when traffic_policy = mixed
+  traffic_vehicle_config:
+    show_navi_mark: false
+    show_dest_mark: false
+    enable_reverse: false
+    show_lidar: false
+    show_lane_line_detector: false
+    show_side_detector: false
+    use_special_color: false
+    random_color: false
+    fixed_color: [0.45, 0.45, 0.45]
+
+  # ===== Reward weights =====
+  driving_reward: 1.0
+  speed_reward: 0.1
+  use_lateral_reward: true
+  lateral_reward_min: 0.5
+  success_reward: 10.0
+  out_of_road_penalty: 10.0
+  crash_vehicle_penalty: 10.0
+  crash_object_penalty: 10.0
+  crash_sidewalk_penalty: 0.0
+
+  # ===== Proximity penalty =====
+  proximity_penalty_enabled: true
+  proximity_threshold: 6.0
+  proximity_penalty_max: 2.0
+  proximity_euclidean_threshold: 1.5
+  proximity_euclidean_penalty_max: 2.0
+
+  # ===== Termination controls =====
+  crash_done: true
+  out_of_road_done: true
+
+  # ===== Sensor config =====
+  vehicle_config:
+    use_special_color: false
+    random_color: true
+    lidar:
+      num_lasers: 120
+      distance: 50
+      num_others: 6          # changing this changes observation shape
+      add_others_navi: true
+      gaussian_noise: 0.0
+      dropout_prob: 0.0
+    side_detector:
+      num_lasers: 0
+      distance: 50
+      gaussian_noise: 0.0
+      dropout_prob: 0.0
+    lane_line_detector:
+      num_lasers: 0
+      distance: 20
+      gaussian_noise: 0.0
+      dropout_prob: 0.0
+
+  # Scene-specific map config
+  map_config:
+    exit_length: 60
+    lane_num: 2
+    # radius: null            # optional custom intersection radius

@@ -1,0 +1,7 @@
+name: metadrive_ma_blocks_test_2env
+sampling: uniform
+tasks:
+  - id: merge
+    env_config: metadrive_ma_block_merge
+  - id: split
+    env_config: metadrive_ma_block_split

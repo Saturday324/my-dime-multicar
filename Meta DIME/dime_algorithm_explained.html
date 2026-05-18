@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DIME 算法与训练框架详解</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg-soft: #121a33;
+      --card: #172344;
+      --line: #2b3c72;
+      --text: #e8eefc;
+      --muted: #aab7df;
+      --blue: #62a8ff;
+      --cyan: #6fe3ff;
+      --green: #62e0a1;
+      --orange: #ffb86b;
+      --pink: #ff7ab6;
+      --shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      background: radial-gradient(circle at 20% 10%, #18264f 0%, var(--bg) 48%);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .container {
+      width: min(1200px, 94vw);
+      margin: 0 auto 60px;
+    }
+
+    header {
+      padding: 34px 0 20px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+      line-height: 1.25;
+      letter-spacing: 0.3px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .meta {
+      color: #8fa0d2;
+      font-size: 14px;
+    }
+
+    section {
+      margin-top: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 20px 22px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 24px;
+    }
+
+    h3 {
+      margin: 6px 0 10px;
+      font-size: 18px;
+      color: #d6e2ff;
+    }
+
+    p, li {
+      color: #d8e2ff;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 14px 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      color: #cfe0ff;
+      border: 1px solid #4863aa;
+      border-radius: 999px;
+      padding: 2px 10px;
+      margin-right: 6px;
+      margin-bottom: 8px;
+      background: rgba(98, 168, 255, 0.12);
+    }
+
+    ul {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+
+    ol {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+
+    code {
+      font-family: "Cascadia Mono", "JetBrains Mono", "SFMono-Regular", monospace;
+      font-size: 90%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 1px 6px;
+      border-radius: 6px;
+      color: #ecf3ff;
+    }
+
+    pre {
+      margin: 10px 0 0;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #354d90;
+      background: #101935;
+      color: #f4f8ff;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "Cascadia Mono", "JetBrains Mono", "SFMono-Regular", monospace;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #32497f;
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: #172a56;
+      color: #ecf3ff;
+    }
+
+    td {
+      background: #101d3d;
+      color: #dce7ff;
+    }
+
+    .svg-wrap {
+      margin-top: 12px;
+      background: #0d1734;
+      border: 1px solid #2f4379;
+      border-radius: 12px;
+      padding: 10px;
+      overflow-x: auto;
+    }
+
+    .svg-caption {
+      color: #9eb1e1;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .kpi {
+      background: #111d3f;
+      border: 1px solid #345087;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .kpi .k {
+      color: #99b0e8;
+      font-size: 12px;
+    }
+
+    .kpi .v {
+      font-weight: 700;
+      margin-top: 4px;
+      color: #ecf4ff;
+    }
+
+    .foot {
+      margin-top: 18px;
+      color: #99abd9;
+      font-size: 13px;
+    }
+
+    .note-callout {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #4663aa;
+      background: linear-gradient(180deg, rgba(98, 168, 255, 0.14), rgba(98, 168, 255, 0.06));
+      color: #dce8ff;
+    }
+
+    .note-callout strong {
+      color: #f0f6ff;
+    }
+
+    .algo-paper {
+      margin-top: 14px;
+      border: 1px solid #415a9d;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #0f1834;
+      box-shadow: var(--shadow);
+    }
+
+    .algo-head {
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid #3d5390;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+    }
+
+    .algo-head h3 {
+      margin: 0;
+      color: #f6f8ff;
+    }
+
+    .algo-sub {
+      margin-top: 4px;
+      color: #aebde7;
+      font-size: 13px;
+    }
+
+    .algo-body {
+      padding: 10px 14px 14px;
+      font-family: "Cascadia Mono", "JetBrains Mono", "SFMono-Regular", monospace;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .algo-line {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 10px;
+      padding: 2px 0;
+      align-items: baseline;
+    }
+
+    .algo-num {
+      color: #91a7df;
+      text-align: right;
+      user-select: none;
+    }
+
+    .algo-code {
+      color: #eef4ff;
+    }
+
+    .algo-code strong {
+      color: #fff3d5;
+    }
+
+    .indent-1 {
+      padding-left: 18px;
+    }
+
+    .indent-2 {
+      padding-left: 36px;
+    }
+
+    @media (max-width: 960px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .kpi-row {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      }
+      h1 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>DIME 算法与训练框架详解（基于 diffusion-rl / DIME 项目代码）</h1>
+      <div class="subtitle">
+        从训练主循环到 Actor/Critic 结构，再到 Env-Buffer-网络之间的数据流，做一份“能直接对照代码阅读”的可视化说明。
+      </div>
+      <div class="meta">
+        参考核心文件：<code>run_dime.py</code>、<code>run_multiagent_dime.py</code>、<code>diffusion/dime.py</code>、<code>diffusion/diffusion_policy.py</code>、<code>models/critic.py</code>
+      </div>
+    </header>
+
+    <section>
+      <h2>1) 项目使用的算法是什么？</h2>
+      <span class="badge">算法名：DIME</span>
+      <span class="badge">范式：Diffusion + Maximum Entropy RL</span>
+      <span class="badge">实现框架：JAX + Flax + SB3 Off-Policy</span>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>核心思想</h3>
+          <ul>
+            <li>把策略（Actor）做成扩散采样器：从先验噪声逐步积分，最终得到动作。</li>
+            <li>Critic 不是单值 Q，而是“分布式 Q”（每个动作输出价值分布原子概率）。</li>
+            <li>在 actor 目标里，不仅有 <code>-Q</code>，还有扩散路径相关代价（running / stochastic / terminal costs）。</li>
+            <li>温度系数 <code>alpha</code>（ent_coef）自动学习，用来平衡“利用价值”和“保持策略熵”。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>与常见 SAC 的关系</h3>
+          <ul>
+            <li>依然是离策略（off-policy）：环境采样到 Replay Buffer，再做批量梯度更新。</li>
+            <li>仍有双 Q（<code>n_critics=2</code>）与目标网络软更新。</li>
+            <li>不同点在于：策略不是高斯 MLP 直接出动作，而是扩散过程采样动作。</li>
+            <li>不同点在于：Critic 采用 <code>n_atoms=101</code> 的分布式表示而非标量回归。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="k">默认批大小</div>
+          <div class="v">256</div>
+        </div>
+        <div class="kpi">
+          <div class="k">UTD（每轮梯度步）</div>
+          <div class="v">2</div>
+        </div>
+        <div class="kpi">
+          <div class="k">Actor 扩散步数</div>
+          <div class="v">16</div>
+        </div>
+        <div class="kpi">
+          <div class="k">Critic 原子数</div>
+          <div class="v">101</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>2) 训练总框架图（Actor / Critic / Env / ReplayBuffer 关系）</h2>
+      <div class="svg-wrap">
+        <svg width="1120" height="520" viewBox="0 0 1120 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DIME training framework">
+          <defs>
+            <marker id="arrowA" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#8cc4ff" />
+            </marker>
+          </defs>
+
+          <rect x="20" y="190" width="200" height="110" rx="12" fill="#17345f" stroke="#6aa4e6" />
+          <text x="120" y="230" text-anchor="middle" fill="#eef6ff" font-size="20" font-weight="600">Environment</text>
+          <text x="120" y="258" text-anchor="middle" fill="#c8dcff" font-size="14">obs, reward, done</text>
+
+          <rect x="280" y="190" width="240" height="110" rx="12" fill="#20345d" stroke="#7eb2f5" />
+          <text x="400" y="226" text-anchor="middle" fill="#eef6ff" font-size="18" font-weight="600">Replay Buffer</text>
+          <text x="400" y="252" text-anchor="middle" fill="#c8dcff" font-size="13">(s, a, r, s', done)</text>
+          <text x="400" y="272" text-anchor="middle" fill="#c8dcff" font-size="13">sample batch_size * gradient_steps</text>
+
+          <rect x="580" y="190" width="240" height="110" rx="12" fill="#204b45" stroke="#71d6c7" />
+          <text x="700" y="225" text-anchor="middle" fill="#eafffb" font-size="18" font-weight="600">DIME Trainer</text>
+          <text x="700" y="250" text-anchor="middle" fill="#ccfff7" font-size="13">update_critic / update_actor</text>
+          <text x="700" y="270" text-anchor="middle" fill="#ccfff7" font-size="13">temperature update</text>
+
+          <rect x="580" y="40" width="240" height="105" rx="12" fill="#2c2e64" stroke="#97a0ff" />
+          <text x="700" y="76" text-anchor="middle" fill="#eef0ff" font-size="18" font-weight="600">Actor (Diffusion)</text>
+          <text x="700" y="100" text-anchor="middle" fill="#d6dcff" font-size="13">obs + noise -> action</text>
+          <text x="700" y="120" text-anchor="middle" fill="#d6dcff" font-size="13">run/sto/terminal costs</text>
+
+          <rect x="580" y="370" width="240" height="110" rx="12" fill="#4d2f1f" stroke="#ffb56c" />
+          <text x="700" y="406" text-anchor="middle" fill="#fff3e4" font-size="18" font-weight="600">Critic (Distributional)</text>
+          <text x="700" y="430" text-anchor="middle" fill="#ffe4c8" font-size="13">Q1, Q2 as atom distributions</text>
+          <text x="700" y="450" text-anchor="middle" fill="#ffe4c8" font-size="13">C51-like projection target</text>
+
+          <rect x="900" y="70" width="200" height="85" rx="10" fill="#2a396a" stroke="#8ca4ff" />
+          <text x="1000" y="104" text-anchor="middle" fill="#edf2ff" font-size="16" font-weight="600">Target Actor</text>
+          <text x="1000" y="126" text-anchor="middle" fill="#d3deff" font-size="12">soft update by policy_tau</text>
+
+          <rect x="900" y="375" width="200" height="85" rx="10" fill="#5a3622" stroke="#ffba75" />
+          <text x="1000" y="409" text-anchor="middle" fill="#fff3e4" font-size="16" font-weight="600">Target Critic</text>
+          <text x="1000" y="431" text-anchor="middle" fill="#ffe0bf" font-size="12">soft update by tau</text>
+
+          <rect x="900" y="225" width="200" height="85" rx="10" fill="#44346f" stroke="#bf9fff" />
+          <text x="1000" y="258" text-anchor="middle" fill="#f4edff" font-size="16" font-weight="600">Entropy Coef α</text>
+          <text x="1000" y="280" text-anchor="middle" fill="#e8dbff" font-size="12">auto-tuned temperature</text>
+
+          <line x1="220" y1="220" x2="280" y2="220" stroke="#8cc4ff" stroke-width="2.5" marker-end="url(#arrowA)" />
+          <text x="244" y="210" fill="#b7d8ff" font-size="12">transition</text>
+
+          <line x1="520" y1="220" x2="580" y2="220" stroke="#8cc4ff" stroke-width="2.5" marker-end="url(#arrowA)" />
+          <text x="534" y="210" fill="#b7d8ff" font-size="12">sample batch</text>
+
+          <line x1="700" y1="145" x2="700" y2="190" stroke="#8cc4ff" stroke-width="2.5" marker-end="url(#arrowA)" />
+          <text x="710" y="172" fill="#c7d8ff" font-size="12">actor grads</text>
+
+          <line x1="700" y1="300" x2="700" y2="370" stroke="#8cc4ff" stroke-width="2.5" marker-end="url(#arrowA)" />
+          <text x="710" y="343" fill="#c7d8ff" font-size="12">critic grads</text>
+
+          <line x1="580" y1="90" x2="220" y2="210" stroke="#8cc4ff" stroke-width="2.5" marker-end="url(#arrowA)" />
+          <text x="370" y="120" fill="#b7d8ff" font-size="12">action for env.step</text>
+
+          <line x1="220" y1="265" x2="580" y2="95" stroke="#8cc4ff" stroke-width="2.5" marker-end="url(#arrowA)" />
+          <text x="370" y="255" fill="#b7d8ff" font-size="12">observation</text>
+
+          <line x1="820" y1="92" x2="900" y2="112" stroke="#95a9ff" stroke-width="2.2" marker-end="url(#arrowA)" />
+          <line x1="900" y1="142" x2="820" y2="92" stroke="#95a9ff" stroke-width="2.2" marker-end="url(#arrowA)" />
+          <text x="845" y="71" fill="#cdd6ff" font-size="12">soft update</text>
+
+          <line x1="820" y1="422" x2="900" y2="417" stroke="#ffbc7b" stroke-width="2.2" marker-end="url(#arrowA)" />
+          <line x1="900" y1="393" x2="820" y2="422" stroke="#ffbc7b" stroke-width="2.2" marker-end="url(#arrowA)" />
+          <text x="842" y="389" fill="#ffd7ad" font-size="12">soft update</text>
+
+          <line x1="1000" y1="225" x2="800" y2="95" stroke="#c6abff" stroke-width="2.2" marker-end="url(#arrowA)" />
+          <line x1="1000" y1="310" x2="800" y2="420" stroke="#c6abff" stroke-width="2.2" marker-end="url(#arrowA)" />
+          <text x="868" y="248" fill="#e2d2ff" font-size="12">α in actor/critic losses</text>
+        </svg>
+      </div>
+      <div class="svg-caption">
+        图示对应 <code>run_dime.py</code> + <code>diffusion/dime.py</code> 的核心数据流。单智能体使用 SB3 的 off-policy 主循环；多智能体版在 <code>run_multiagent_dime.py</code> 里手写 env step 循环，但更新逻辑仍复用 DIME。
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>训练主循环（单智能体）</h3>
+          <ol>
+            <li>从环境拿到观测 <code>s</code>，Actor 采样动作 <code>a</code>（学习初期可随机探索）。</li>
+            <li>执行 <code>env.step(a)</code> 得到 <code>(s', r, done)</code>。</li>
+            <li>转移存入 Replay Buffer。</li>
+            <li>当 <code>learning_starts</code> 且 buffer 足够大时，按 <code>utd</code> 做多步梯度更新。</li>
+            <li>Critic 每步更新；Actor 按 <code>policy_delay</code> 间隔更新。</li>
+            <li>定期保存参数并写日志到 TensorBoard/WandB。</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h3>关键损失（代码等价表达）</h3>
+          <pre>Actor:
+L_actor = E[ -min(Q1, Q2) + α * (run_cost + sto_cost + terminal_cost) ]
+
+Critic:
+1) 用 target_actor 采样 next_action 及 next_costs
+2) 计算分布式 target（投影到 [v_min, v_max] 的 n_atoms 原子）
+3) 当前 Q 分布 vs target 分布做交叉熵 + 熵正则
+
+Temperature:
+α 自动优化（ent_coef_state），用于平衡价值项与熵项</pre>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>3) Actor 网络结构与输入输出</h2>
+      <div class="svg-wrap">
+        <svg width="1120" height="470" viewBox="0 0 1120 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Actor network architecture">
+          <defs>
+            <marker id="arrowB" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#98d5ff" />
+            </marker>
+          </defs>
+
+          <rect x="20" y="35" width="210" height="80" rx="10" fill="#17345f" stroke="#72b6f7" />
+          <text x="125" y="66" text-anchor="middle" fill="#eef7ff" font-size="16" font-weight="600">Obs 输入</text>
+          <text x="125" y="90" text-anchor="middle" fill="#cfe2ff" font-size="12">shape: [B, obs_dim]</text>
+
+          <rect x="20" y="140" width="210" height="80" rx="10" fill="#17345f" stroke="#72b6f7" />
+          <text x="125" y="172" text-anchor="middle" fill="#eef7ff" font-size="16" font-weight="600">先验噪声 z0</text>
+          <text x="125" y="196" text-anchor="middle" fill="#cfe2ff" font-size="12">prior_sampler(params, key)</text>
+
+          <rect x="270" y="85" width="280" height="210" rx="12" fill="#24356a" stroke="#9bb2ff" />
+          <text x="410" y="115" text-anchor="middle" fill="#f0f3ff" font-size="17" font-weight="600">扩散积分循环 t = 0...T-1</text>
+          <text x="410" y="138" text-anchor="middle" fill="#d6deff" font-size="12">T = diff_steps (默认 16)</text>
+
+          <rect x="298" y="156" width="224" height="120" rx="9" fill="#172450" stroke="#8fa3f0" />
+          <text x="410" y="182" text-anchor="middle" fill="#eaf0ff" font-size="14" font-weight="600">PISGRADNet (前向分数网络)</text>
+          <text x="410" y="204" text-anchor="middle" fill="#ced9ff" font-size="12">输入: [x_t, obs, time_embed, target_score?]</text>
+          <text x="410" y="224" text-anchor="middle" fill="#ced9ff" font-size="12">结构: 3层 MLP, hidden=256 (config)</text>
+          <text x="410" y="244" text-anchor="middle" fill="#ced9ff" font-size="12">输出: drift 修正项 (维度=action_dim)</text>
+          <text x="410" y="264" text-anchor="middle" fill="#ced9ff" font-size="12">EM 积分更新 x_(t+1)</text>
+
+          <rect x="590" y="85" width="250" height="95" rx="10" fill="#204b45" stroke="#74dfcd" />
+          <text x="715" y="118" text-anchor="middle" fill="#e8fffb" font-size="16" font-weight="600">最终 latent x_T</text>
+          <text x="715" y="140" text-anchor="middle" fill="#cbfff6" font-size="12">running_cost 由路径概率比得到</text>
+          <text x="715" y="160" text-anchor="middle" fill="#cbfff6" font-size="12">terminal_cost 来自 prior_log_prob(z0)</text>
+
+          <rect x="590" y="205" width="250" height="90" rx="10" fill="#2c4c20" stroke="#8fdd6c" />
+          <text x="715" y="238" text-anchor="middle" fill="#ecffe5" font-size="16" font-weight="600">tanh 映射动作</text>
+          <text x="715" y="260" text-anchor="middle" fill="#dbffd0" font-size="12">action = tanh(x_T)</text>
+          <text x="715" y="278" text-anchor="middle" fill="#dbffd0" font-size="12">再按 action_space 缩放</text>
+
+          <rect x="880" y="90" width="220" height="90" rx="10" fill="#4e2e22" stroke="#ffb474" />
+          <text x="990" y="124" text-anchor="middle" fill="#fff2e3" font-size="16" font-weight="600">输出 1: action</text>
+          <text x="990" y="147" text-anchor="middle" fill="#ffe5c8" font-size="12">shape: [B, act_dim]</text>
+
+          <rect x="880" y="205" width="220" height="105" rx="10" fill="#44346f" stroke="#c4a2ff" />
+          <text x="990" y="236" text-anchor="middle" fill="#f5edff" font-size="16" font-weight="600">输出 2: 成本项</text>
+          <text x="990" y="258" text-anchor="middle" fill="#e9dcff" font-size="12">run_cost / sto_cost / terminal_cost</text>
+          <text x="990" y="278" text-anchor="middle" fill="#e9dcff" font-size="12">用于 actor loss 与 critic target</text>
+          <text x="990" y="296" text-anchor="middle" fill="#e9dcff" font-size="12">（当前 DIS 实现中 sto_cost 常为 0）</text>
+
+          <line x1="230" y1="74" x2="270" y2="130" stroke="#98d5ff" stroke-width="2.5" marker-end="url(#arrowB)" />
+          <line x1="230" y1="180" x2="270" y2="170" stroke="#98d5ff" stroke-width="2.5" marker-end="url(#arrowB)" />
+          <line x1="550" y1="190" x2="590" y2="130" stroke="#98d5ff" stroke-width="2.5" marker-end="url(#arrowB)" />
+          <line x1="550" y1="215" x2="590" y2="245" stroke="#98d5ff" stroke-width="2.5" marker-end="url(#arrowB)" />
+          <line x1="840" y1="132" x2="880" y2="132" stroke="#98d5ff" stroke-width="2.5" marker-end="url(#arrowB)" />
+          <line x1="840" y1="250" x2="880" y2="250" stroke="#98d5ff" stroke-width="2.5" marker-end="url(#arrowB)" />
+        </svg>
+      </div>
+
+      <div class="note-callout">
+        <strong>和你图一最大的差别：</strong>DIME 里的 Actor 不是“MLP 直接输出 <code>mean</code> / <code>variance</code>，然后 reparameterize 采样”的高斯策略。
+        它真正输出的是每个扩散步里的 <code>forward drift / score correction</code>，再通过 EM 积分把 latent 从 <code>x_t</code> 逐步推进到 <code>x_T</code>，最后再经过 <code>tanh</code> 得到动作。
+      </div>
+
+      <div class="svg-wrap">
+        <svg width="1120" height="760" viewBox="0 0 1120 760" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Detailed actor internal architecture">
+          <defs>
+            <marker id="arrowDetail" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#9fd7ff" />
+            </marker>
+            <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#8ce18a" />
+            </marker>
+          </defs>
+
+          <text x="560" y="34" text-anchor="middle" fill="#f0f5ff" font-size="23" font-weight="700">Actor 内部结构细化图（对应 PISGRADNet + DIS 采样）</text>
+          <text x="560" y="58" text-anchor="middle" fill="#b7c7f1" font-size="13">把代码中的 time embedding、状态分支、可选 target-score 分支、EM 积分与最终动作输出拆开显示</text>
+
+          <rect x="30" y="110" width="170" height="78" rx="10" fill="#193764" stroke="#72b7f8" />
+          <text x="115" y="141" text-anchor="middle" fill="#eef7ff" font-size="16" font-weight="600">当前 latent</text>
+          <text x="115" y="164" text-anchor="middle" fill="#d4e4ff" font-size="12">x_t, shape [B, act_dim]</text>
+
+          <rect x="30" y="230" width="170" height="78" rx="10" fill="#193764" stroke="#72b7f8" />
+          <text x="115" y="261" text-anchor="middle" fill="#eef7ff" font-size="16" font-weight="600">观测条件</text>
+          <text x="115" y="284" text-anchor="middle" fill="#d4e4ff" font-size="12">obs, shape [B, obs_dim]</text>
+
+          <rect x="30" y="350" width="170" height="78" rx="10" fill="#2f396f" stroke="#b5a4ff" />
+          <text x="115" y="381" text-anchor="middle" fill="#f3efff" font-size="16" font-weight="600">时间步</text>
+          <text x="115" y="404" text-anchor="middle" fill="#e0d6ff" font-size="12">t, shape [B, 1]</text>
+
+          <rect x="250" y="330" width="230" height="118" rx="12" fill="#2d2f66" stroke="#a8b0ff" />
+          <text x="365" y="360" text-anchor="middle" fill="#f1f3ff" font-size="16" font-weight="700">Fourier 时间编码</text>
+          <text x="365" y="384" text-anchor="middle" fill="#d7ddff" font-size="12">sin((coeff * t) + phase)</text>
+          <text x="365" y="404" text-anchor="middle" fill="#d7ddff" font-size="12">cos((coeff * t) + phase)</text>
+          <text x="365" y="424" text-anchor="middle" fill="#d7ddff" font-size="12">输出维度约为 2 * num_hid</text>
+
+          <rect x="540" y="110" width="245" height="145" rx="12" fill="#243a6f" stroke="#9eb4ff" />
+          <text x="662" y="138" text-anchor="middle" fill="#eef2ff" font-size="16" font-weight="700">time_coder_state 分支</text>
+          <text x="662" y="164" text-anchor="middle" fill="#d8e0ff" font-size="12">Dense(256) -> GELU -> Dense(256)</text>
+          <text x="662" y="186" text-anchor="middle" fill="#d8e0ff" font-size="12">得到 t_net1</text>
+          <text x="662" y="208" text-anchor="middle" fill="#d8e0ff" font-size="12">作为主状态分支的时间条件</text>
+          <text x="662" y="230" text-anchor="middle" fill="#d8e0ff" font-size="12">time_coder_out = 256</text>
+
+          <rect x="540" y="305" width="245" height="170" rx="12" fill="#51346f" stroke="#c5a6ff" />
+          <text x="662" y="334" text-anchor="middle" fill="#f7eeff" font-size="16" font-weight="700">可选 time_coder_grad 分支</text>
+          <text x="662" y="360" text-anchor="middle" fill="#eadcff" font-size="12">Dense(256)</text>
+          <text x="662" y="382" text-anchor="middle" fill="#eadcff" font-size="12">(GELU -> Dense(256)) x 3</text>
+          <text x="662" y="404" text-anchor="middle" fill="#eadcff" font-size="12">Dense(act_dim)</text>
+          <text x="662" y="426" text-anchor="middle" fill="#eadcff" font-size="12">输出 t_net2，用于调制 target_score</text>
+          <text x="662" y="448" text-anchor="middle" fill="#eadcff" font-size="12">默认配置里 use_target_score = false</text>
+
+          <rect x="840" y="86" width="240" height="205" rx="12" fill="#4b2e20" stroke="#ffb677" />
+          <text x="960" y="116" text-anchor="middle" fill="#fff2e5" font-size="16" font-weight="700">主状态分支 state_time_net</text>
+          <text x="960" y="142" text-anchor="middle" fill="#ffe6cd" font-size="12">输入 concat([x_t, obs, t_net1])</text>
+          <text x="960" y="166" text-anchor="middle" fill="#ffe6cd" font-size="12">(Dense(256) -> GELU) x 3</text>
+          <text x="960" y="190" text-anchor="middle" fill="#ffe6cd" font-size="12">Dense(act_dim)</text>
+          <text x="960" y="214" text-anchor="middle" fill="#ffe6cd" font-size="12">clip to [-outer_clip, outer_clip]</text>
+          <text x="960" y="238" text-anchor="middle" fill="#ffe6cd" font-size="12">输出 out_state</text>
+          <text x="960" y="262" text-anchor="middle" fill="#ffe6cd" font-size="12">这是 drift / score correction</text>
+
+          <rect x="840" y="330" width="240" height="130" rx="12" fill="#214443" stroke="#73dacd" />
+          <text x="960" y="360" text-anchor="middle" fill="#ebfffb" font-size="16" font-weight="700">可选 target-score 注入</text>
+          <text x="960" y="386" text-anchor="middle" fill="#d3fff8" font-size="12">若 use_target_score = true</text>
+          <text x="960" y="408" text-anchor="middle" fill="#d3fff8" font-size="12">output = out_state + t_net2 * target_score</text>
+          <text x="960" y="430" text-anchor="middle" fill="#d3fff8" font-size="12">否则 output = out_state</text>
+
+          <rect x="430" y="520" width="330" height="145" rx="12" fill="#204b45" stroke="#72dec9" />
+          <text x="595" y="552" text-anchor="middle" fill="#eafffb" font-size="17" font-weight="700">单步 EM 积分更新</text>
+          <text x="595" y="580" text-anchor="middle" fill="#d1fff8" font-size="12">prior_drift = grad log p_prior(x_t)</text>
+          <text x="595" y="602" text-anchor="middle" fill="#d1fff8" font-size="12">eta = dt * sigma^2, scale = sqrt(2 * eta)</text>
+          <text x="595" y="624" text-anchor="middle" fill="#d1fff8" font-size="12">fwd_mean = x_t + eta * (prior_drift + actor_output)</text>
+          <text x="595" y="646" text-anchor="middle" fill="#d1fff8" font-size="12">x_(t+1) ~ N(fwd_mean, scale^2 I)</text>
+
+          <rect x="830" y="535" width="250" height="125" rx="12" fill="#2f4d22" stroke="#90de6b" />
+          <text x="955" y="566" text-anchor="middle" fill="#ecffe5" font-size="16" font-weight="700">扩散完成后</text>
+          <text x="955" y="590" text-anchor="middle" fill="#dcffd2" font-size="12">得到最终 latent x_T</text>
+          <text x="955" y="612" text-anchor="middle" fill="#dcffd2" font-size="12">action = tanh(x_T)</text>
+          <text x="955" y="634" text-anchor="middle" fill="#dcffd2" font-size="12">再按 action_space 做缩放</text>
+
+          <rect x="30" y="520" width="300" height="145" rx="12" fill="#44346f" stroke="#c5a6ff" />
+          <text x="180" y="552" text-anchor="middle" fill="#f4edff" font-size="16" font-weight="700">并行输出的路径代价</text>
+          <text x="180" y="580" text-anchor="middle" fill="#e7dcff" font-size="12">running_cost: 正反核 log 概率比</text>
+          <text x="180" y="602" text-anchor="middle" fill="#e7dcff" font-size="12">stochastic_cost: 当前 DIS 里通常为 0</text>
+          <text x="180" y="624" text-anchor="middle" fill="#e7dcff" font-size="12">terminal_cost: prior_log_prob(z0)</text>
+          <text x="180" y="646" text-anchor="middle" fill="#e7dcff" font-size="12">供 actor loss / critic target 使用</text>
+
+          <rect x="840" y="492" width="165" height="24" rx="8" fill="#152449" stroke="#7da0ef" />
+          <text x="922" y="509" text-anchor="middle" fill="#dbe5ff" font-size="11">循环 diff_steps = 16 次</text>
+
+          <line x1="200" y1="149" x2="840" y2="149" stroke="#9fd7ff" stroke-width="2.5" marker-end="url(#arrowDetail)" />
+          <line x1="200" y1="269" x2="840" y2="173" stroke="#9fd7ff" stroke-width="2.5" marker-end="url(#arrowDetail)" />
+          <line x1="200" y1="389" x2="250" y2="389" stroke="#bfa9ff" stroke-width="2.5" marker-end="url(#arrowDetail)" />
+          <line x1="480" y1="389" x2="540" y2="180" stroke="#9fd7ff" stroke-width="2.5" marker-end="url(#arrowDetail)" />
+          <line x1="480" y1="389" x2="540" y2="390" stroke="#bfa9ff" stroke-width="2.5" marker-end="url(#arrowDetail)" />
+          <line x1="785" y1="182" x2="840" y2="182" stroke="#9fd7ff" stroke-width="2.5" marker-end="url(#arrowDetail)" />
+          <line x1="785" y1="390" x2="840" y2="390" stroke="#bfa9ff" stroke-width="2.5" marker-end="url(#arrowDetail)" />
+          <line x1="960" y1="291" x2="960" y2="330" stroke="#9fd7ff" stroke-width="2.5" marker-end="url(#arrowDetail)" stroke-dasharray="6 6" />
+          <line x1="960" y1="460" x2="720" y2="520" stroke="#9fd7ff" stroke-width="2.5" marker-end="url(#arrowDetail)" />
+          <line x1="595" y1="665" x2="830" y2="597" stroke="#8ce18a" stroke-width="2.5" marker-end="url(#arrowGreen)" />
+          <line x1="540" y1="595" x2="330" y2="595" stroke="#c4a2ff" stroke-width="2.5" marker-end="url(#arrowDetail)" />
+          <line x1="500" y1="520" x2="140" y2="188" stroke="#9fd7ff" stroke-width="2.1" marker-end="url(#arrowDetail)" stroke-dasharray="8 6" />
+
+          <text x="283" y="136" fill="#badaff" font-size="12">x_t 直接进入主分支</text>
+          <text x="520" y="560" fill="#d4fff8" font-size="12">actor 输出只是单步修正项，不是最终动作分布参数</text>
+          <text x="124" y="688" fill="#b6c7f2" font-size="12">右侧 EM 更新得到 x_(t+1)，再回到下一步 t+1 继续积分</text>
+        </svg>
+      </div>
+      <div class="svg-caption">
+        这张细化图对应 <code>diffusion/common/models/pisgrad_net.py</code>、<code>diffusion/od/dis.py</code>、<code>diffusion/od/od_integrators.py</code> 和 <code>diffusion/od/od_sampling.py</code>。
+        如果你更习惯高斯 Actor 的画法，可以把这里的 <code>state_time_net</code> 理解成“在每个扩散步上输出一个修正量”，而不是一次性输出 <code>μ</code> 和 <code>σ</code>。
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Actor 内部子模块逐层拆解</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>模块</th>
+                <th>实际结构</th>
+                <th>输入</th>
+                <th>输出</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Fourier 时间编码</td>
+                <td><code>sin/cos((coeff * t) + phase)</code></td>
+                <td><code>t</code></td>
+                <td>时间特征</td>
+              </tr>
+              <tr>
+                <td><code>time_coder_state</code></td>
+                <td><code>Dense(256) -> GELU -> Dense(256)</code></td>
+                <td>时间特征</td>
+                <td><code>t_net1</code></td>
+              </tr>
+              <tr>
+                <td><code>state_time_net</code></td>
+                <td><code>(Dense(256) -> GELU) x 3 -> Dense(act_dim)</code></td>
+                <td><code>[x_t, obs, t_net1]</code></td>
+                <td><code>out_state</code></td>
+              </tr>
+              <tr>
+                <td><code>time_coder_grad</code></td>
+                <td><code>Dense(256) -> (GELU -> Dense(256)) x 3 -> Dense(act_dim)</code></td>
+                <td>时间特征</td>
+                <td><code>t_net2</code></td>
+              </tr>
+              <tr>
+                <td>可选 target-score 注入</td>
+                <td><code>out_state + t_net2 * target_score</code></td>
+                <td><code>out_state</code>, <code>t_net2</code>, <code>target_score</code></td>
+                <td>最终 actor 输出</td>
+              </tr>
+              <tr>
+                <td>EM 单步采样</td>
+                <td><code>x_(t+1) ~ N(fwd_mean, 2 * eta * I)</code></td>
+                <td><code>x_t</code>, prior drift, actor 输出</td>
+                <td><code>x_(t+1)</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>如果按你图一的风格去对应</h3>
+          <pre>高斯 Actor（你图一）:
+obs -> MLP -> mean / variance -> resample -> action
+
+DIME Actor（这个项目）:
+obs + x_t + t -> PISGRADNet -> 单步 drift correction
+                 -> EM 积分推进 x_t -> x_(t+1)
+                 -> 重复 T 次
+                 -> tanh(x_T) -> action
+
+所以：
+- “mean / variance” 那一层，在 DIME 里并不存在
+- 真正可视化重点应放在：
+  1) 条件输入 obs
+  2) 时间编码 t
+  3) latent 状态 x_t
+  4) 每一步的 drift / score 修正
+  5) 多步积分后的最终动作</pre>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Actor 输入/输出汇总</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>项</th>
+                <th>形状（示意）</th>
+                <th>来源</th>
+                <th>用途</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>observation</td>
+                <td>[B, obs_dim]</td>
+                <td>环境或 replay batch</td>
+                <td>条件输入（condition）</td>
+              </tr>
+              <tr>
+                <td>z0</td>
+                <td>[B, act_dim]</td>
+                <td>prior sampler</td>
+                <td>扩散初始 latent</td>
+              </tr>
+              <tr>
+                <td>time step t</td>
+                <td>[B, 1]</td>
+                <td>积分循环</td>
+                <td>时间嵌入与动态更新</td>
+              </tr>
+              <tr>
+                <td>action</td>
+                <td>[B, act_dim]</td>
+                <td>扩散终态 tanh 后</td>
+                <td>与 env 交互、送入 critic</td>
+              </tr>
+              <tr>
+                <td>run/sto/terminal costs</td>
+                <td>[B]</td>
+                <td>采样轨迹统计</td>
+                <td>熵项与训练目标</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Actor 相关目标函数</h3>
+          <pre>在 update_actor 中（dime.py）：
+
+qf_pi1 = sum(q_dist1 * z_atoms)
+qf_pi2 = sum(q_dist2 * z_atoms)
+min_qf = reduce([qf_pi1, qf_pi2])
+
+L_actor = mean(
+  -min_qf
+  + alpha * (run_cost + sto_cost + terminal_cost)
+)
+
+说明：
+- alpha 来自可学习的温度系数 ent_coef_state
+- run/sto/terminal costs 是扩散策略的“熵/路径代价代理项”</pre>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>4) Critic 网络结构与输入输出</h2>
+      <div class="svg-wrap">
+        <svg width="1120" height="470" viewBox="0 0 1120 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Critic network architecture">
+          <defs>
+            <marker id="arrowC" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#ffc590" />
+            </marker>
+          </defs>
+
+          <rect x="20" y="50" width="220" height="78" rx="10" fill="#17345f" stroke="#79baf8" />
+          <text x="130" y="81" text-anchor="middle" fill="#eef7ff" font-size="16" font-weight="600">Obs 输入</text>
+          <text x="130" y="104" text-anchor="middle" fill="#d0e2ff" font-size="12">[B, obs_dim]</text>
+
+          <rect x="20" y="155" width="220" height="78" rx="10" fill="#2c4c20" stroke="#90dc6b" />
+          <text x="130" y="186" text-anchor="middle" fill="#ecffe6" font-size="16" font-weight="600">Action 输入</text>
+          <text x="130" y="209" text-anchor="middle" fill="#ddffd1" font-size="12">[B, act_dim]</text>
+
+          <rect x="285" y="98" width="230" height="90" rx="10" fill="#263a6d" stroke="#9eb4ff" />
+          <text x="400" y="132" text-anchor="middle" fill="#eef2ff" font-size="16" font-weight="600">Concat [obs, action]</text>
+          <text x="400" y="155" text-anchor="middle" fill="#d9e1ff" font-size="12">输入到 VectorCritic</text>
+
+          <rect x="560" y="40" width="250" height="170" rx="12" fill="#4b2d20" stroke="#ffb575" />
+          <text x="685" y="72" text-anchor="middle" fill="#fff2e5" font-size="16" font-weight="700">Critic #1</text>
+          <text x="685" y="94" text-anchor="middle" fill="#ffe6cb" font-size="12">Dense 2048 -> ReLU</text>
+          <text x="685" y="114" text-anchor="middle" fill="#ffe6cb" font-size="12">Dense 2048 -> ReLU</text>
+          <text x="685" y="134" text-anchor="middle" fill="#ffe6cb" font-size="12">Dense n_atoms(101) -> Softmax</text>
+          <text x="685" y="154" text-anchor="middle" fill="#ffe6cb" font-size="12">输出: P(Z|s,a), shape [B,101]</text>
+          <text x="685" y="174" text-anchor="middle" fill="#ffe6cb" font-size="12">Q1 = sum(P * z_atoms)</text>
+
+          <rect x="560" y="245" width="250" height="170" rx="12" fill="#4b2d20" stroke="#ffb575" />
+          <text x="685" y="277" text-anchor="middle" fill="#fff2e5" font-size="16" font-weight="700">Critic #2</text>
+          <text x="685" y="299" text-anchor="middle" fill="#ffe6cb" font-size="12">Dense 2048 -> ReLU</text>
+          <text x="685" y="319" text-anchor="middle" fill="#ffe6cb" font-size="12">Dense 2048 -> ReLU</text>
+          <text x="685" y="339" text-anchor="middle" fill="#ffe6cb" font-size="12">Dense n_atoms(101) -> Softmax</text>
+          <text x="685" y="359" text-anchor="middle" fill="#ffe6cb" font-size="12">输出: P(Z|s,a), shape [B,101]</text>
+          <text x="685" y="379" text-anchor="middle" fill="#ffe6cb" font-size="12">Q2 = sum(P * z_atoms)</text>
+
+          <rect x="860" y="120" width="240" height="105" rx="10" fill="#203f46" stroke="#70d9ca" />
+          <text x="980" y="154" text-anchor="middle" fill="#e9fffb" font-size="16" font-weight="600">聚合与目标构造</text>
+          <text x="980" y="177" text-anchor="middle" fill="#d3fff7" font-size="12">min(Q1,Q2) 用于 actor loss</text>
+          <text x="980" y="196" text-anchor="middle" fill="#d3fff7" font-size="12">分布投影 target 用于 critic loss</text>
+
+          <rect x="860" y="255" width="240" height="110" rx="10" fill="#44346f" stroke="#c7a6ff" />
+          <text x="980" y="289" text-anchor="middle" fill="#f5edff" font-size="16" font-weight="600">Critic Loss</text>
+          <text x="980" y="312" text-anchor="middle" fill="#eadcff" font-size="12">CE(current_dist, projected_target)</text>
+          <text x="980" y="331" text-anchor="middle" fill="#eadcff" font-size="12">+ entr_coeff * entropy(pred_dist)</text>
+          <text x="980" y="350" text-anchor="middle" fill="#eadcff" font-size="12">双 Q 相加</text>
+
+          <line x1="240" y1="90" x2="285" y2="130" stroke="#ffc590" stroke-width="2.5" marker-end="url(#arrowC)" />
+          <line x1="240" y1="195" x2="285" y2="158" stroke="#ffc590" stroke-width="2.5" marker-end="url(#arrowC)" />
+
+          <line x1="515" y1="130" x2="560" y2="120" stroke="#ffc590" stroke-width="2.5" marker-end="url(#arrowC)" />
+          <line x1="515" y1="156" x2="560" y2="320" stroke="#ffc590" stroke-width="2.5" marker-end="url(#arrowC)" />
+
+          <line x1="810" y1="120" x2="860" y2="170" stroke="#ffc590" stroke-width="2.5" marker-end="url(#arrowC)" />
+          <line x1="810" y1="320" x2="860" y2="175" stroke="#ffc590" stroke-width="2.5" marker-end="url(#arrowC)" />
+          <line x1="980" y1="225" x2="980" y2="255" stroke="#ffc590" stroke-width="2.5" marker-end="url(#arrowC)" />
+        </svg>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Critic 输入/输出与默认结构</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>项</th>
+                <th>默认配置</th>
+                <th>代码位置</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>输入</td>
+                <td><code>[obs, action]</code> 拼接</td>
+                <td><code>models/critic.py</code> / <code>Critic.__call__</code></td>
+              </tr>
+              <tr>
+                <td>隐藏层</td>
+                <td><code>[2048, 2048]</code></td>
+                <td><code>configs/alg/dime.yaml</code></td>
+              </tr>
+              <tr>
+                <td>激活</td>
+                <td><code>relu</code></td>
+                <td><code>configs/alg/dime.yaml</code></td>
+              </tr>
+              <tr>
+                <td>头数</td>
+                <td><code>n_critics = 2</code></td>
+                <td><code>VectorCritic(nn.vmap)</code></td>
+              </tr>
+              <tr>
+                <td>输出</td>
+                <td><code>n_atoms = 101</code> 概率分布</td>
+                <td><code>softmax</code> over atoms</td>
+              </tr>
+              <tr>
+                <td>标量 Q</td>
+                <td><code>sum(prob * z_atoms)</code></td>
+                <td><code>dime.py</code> / <code>update_actor</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Critic 目标分布（简化）</h3>
+          <pre>z_atoms = linspace(v_min, v_max, n_atoms)
+
+next_action 由 target_actor 采样得到
+next_cost = next_run + next_sto + next_terminal
+
+entropy_bonus = -(1-done) * gamma * alpha * next_cost
+target_z = clip(
+  reward + entropy_bonus + (1-done) * gamma * z_atoms,
+  v_min, v_max
+)
+
+将 target_z 投影到离散原子上，得到 projected_target_dist
+对当前 critic 的分布输出做交叉熵损失</pre>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>5) 多智能体训练框架（run_multiagent_dime.py）</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>流程差异</h3>
+          <ul>
+            <li>环境是多智能体 dict 形式：每个 agent 都有独立 obs/action/reward/done。</li>
+            <li>动作采样是“共享一套 DIME 参数，对每个 agent 逐个调用 predict”。</li>
+            <li>每次 env.step 后，把每个 agent 的 transition 都写入同一个 replay buffer。</li>
+            <li>训练触发条件仍是 buffer 大小 + learning_starts，与单智能体一致。</li>
+            <li><code>num_timesteps</code> 按 env step 计数，同时另外记录 total_agent_steps。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>你可以这样理解</h3>
+          <pre>“多智能体版本 = 数据采集层改成 MA，
+参数更新层仍是同一个 DIME 算法内核”。
+
+也就是：
+MA env -> (多条 agent transition) -> shared replay buffer
+        -> shared actor/critic update (JAX 批训练)</pre>
+        </div>
+      </div>
+
+      <div class="note-callout">
+        <strong>重要说明：</strong>这个多智能体实现并不是 centralized critic。
+        它更接近“<strong>参数共享的独立学习</strong>”：先从多智能体环境中提取单个 agent 的观测空间和动作空间，然后所有 agent 共享同一套 Actor/Critic 参数；
+        每个 agent 的 transition 被分别写入同一个 replay buffer，再按单智能体 DIME 的方式训练。
+      </div>
+
+      <div class="algo-paper">
+        <div class="algo-head">
+          <h3>Algorithm: Multi-Agent DIME with Shared Parameters</h3>
+          <div class="algo-sub">根据 <code>run_multiagent_dime.py</code> 与 <code>diffusion/dime.py</code> 整理，风格上参考你给的论文伪代码图。</div>
+        </div>
+        <div class="algo-body">
+          <div class="algo-line"><div class="algo-num">1:</div><div class="algo-code">Initialize shared diffusion actor <code>π_φ</code>, shared critics <code>Q_θ1, Q_θ2</code>, target actor <code>π̄</code>, temperature <code>α</code>.</div></div>
+          <div class="algo-line"><div class="algo-num">2:</div><div class="algo-code">Initialize replay buffer <code>D</code>.</div></div>
+          <div class="algo-line"><div class="algo-num">3:</div><div class="algo-code">Reset multi-agent env and get initial observation dict <code>O = {o_i}</code>.</div></div>
+          <div class="algo-line"><div class="algo-num">4:</div><div class="algo-code"><strong>while</strong> <code>env_steps &lt; total_timesteps</code> <strong>do</strong></div></div>
+
+          <div class="algo-line"><div class="algo-num">5:</div><div class="algo-code indent-1"><strong>if</strong> no active agents remain <strong>then</strong> reset env with next seed and continue</div></div>
+          <div class="algo-line"><div class="algo-num">6:</div><div class="algo-code indent-1"><strong>for each</strong> agent <code>i</code> in active agent set <code>A</code> <strong>do</strong></div></div>
+          <div class="algo-line"><div class="algo-num">7:</div><div class="algo-code indent-2"><strong>if</strong> <code>env_steps &lt; learning_starts</code> <strong>then</strong> sample random action <code>a_i</code></div></div>
+          <div class="algo-line"><div class="algo-num">8:</div><div class="algo-code indent-2"><strong>else</strong> sample <code>a_i ~ π_φ(. | o_i)</code> with current DIME actor</div></div>
+          <div class="algo-line"><div class="algo-num">9:</div><div class="algo-code indent-1"><strong>end for</strong></div></div>
+
+          <div class="algo-line"><div class="algo-num">10:</div><div class="algo-code indent-1">Execute one joint environment step with action dict <code>A_t = {a_i}</code>.</div></div>
+          <div class="algo-line"><div class="algo-num">11:</div><div class="algo-code indent-1">Observe <code>O' = {o'_i}</code>, rewards <code>R = {r_i}</code>, terminations <code>T = {done_i}</code>, truncations <code>U = {trunc_i}</code>.</div></div>
+          <div class="algo-line"><div class="algo-num">12:</div><div class="algo-code indent-1"><strong>for each</strong> agent <code>i</code> in previous active set <code>A</code> <strong>do</strong></div></div>
+          <div class="algo-line"><div class="algo-num">13:</div><div class="algo-code indent-2">Set <code>d_i = done_i or trunc_i</code>.</div></div>
+          <div class="algo-line"><div class="algo-num">14:</div><div class="algo-code indent-2"><strong>if</strong> next obs <code>o'_i</code> is missing <strong>then</strong> use zero tensor with same shape as <code>o_i</code>.</div></div>
+          <div class="algo-line"><div class="algo-num">15:</div><div class="algo-code indent-2">Store single-agent transition <code>(o_i, a_i, r_i, o'_i, d_i)</code> into shared buffer <code>D</code>.</div></div>
+          <div class="algo-line"><div class="algo-num">16:</div><div class="algo-code indent-1"><strong>end for</strong></div></div>
+          <div class="algo-line"><div class="algo-num">17:</div><div class="algo-code indent-1">Increment <code>env_steps</code>; set <code>model.num_timesteps = env_steps</code>.</div></div>
+
+          <div class="algo-line"><div class="algo-num">18:</div><div class="algo-code indent-1"><strong>if</strong> <code>env_steps &gt;= learning_starts</code> and <code>|D| &gt;= batch_size</code> and training condition is satisfied <strong>then</strong></div></div>
+          <div class="algo-line"><div class="algo-num">19:</div><div class="algo-code indent-2"><strong>repeat</strong> <code>gradient_steps = utd</code> times</div></div>
+          <div class="algo-line"><div class="algo-num">20:</div><div class="algo-code indent-2">Sample mini-batch <code>B = {(s, a, r, s', d)}</code> from <code>D</code>.</div></div>
+          <div class="algo-line"><div class="algo-num">21:</div><div class="algo-code indent-2">Sample next actions <code>a' ~ π̄(. | s')</code> using target diffusion actor.</div></div>
+          <div class="algo-line"><div class="algo-num">22:</div><div class="algo-code indent-2">Compute projected distributional target with reward, <code>γ</code>, and entropy-related diffusion costs.</div></div>
+          <div class="algo-line"><div class="algo-num">23:</div><div class="algo-code indent-2">Update critics <code>Q_θ1, Q_θ2</code> by cross-entropy loss on atom distributions.</div></div>
+          <div class="algo-line"><div class="algo-num">24:</div><div class="algo-code indent-2">Soft-update target critics with coefficient <code>τ</code>.</div></div>
+          <div class="algo-line"><div class="algo-num">25:</div><div class="algo-code indent-2"><strong>if</strong> current update index satisfies <code>policy_delay</code> <strong>then</strong></div></div>
+          <div class="algo-line"><div class="algo-num">26:</div><div class="algo-code indent-2">Sample current actions <code>a ~ π_φ(. | s)</code> and corresponding diffusion costs.</div></div>
+          <div class="algo-line"><div class="algo-num">27:</div><div class="algo-code indent-2">Update actor by minimizing <code>-min(Q1,Q2) + α(run_cost + sto_cost + terminal_cost)</code>.</div></div>
+          <div class="algo-line"><div class="algo-num">28:</div><div class="algo-code indent-2">Update temperature <code>α</code>.</div></div>
+          <div class="algo-line"><div class="algo-num">29:</div><div class="algo-code indent-2">Soft-update target actor with coefficient <code>policy_tau</code>.</div></div>
+          <div class="algo-line"><div class="algo-num">30:</div><div class="algo-code indent-2"><strong>end if</strong></div></div>
+          <div class="algo-line"><div class="algo-num">31:</div><div class="algo-code indent-2"><strong>end repeat</strong></div></div>
+          <div class="algo-line"><div class="algo-num">32:</div><div class="algo-code indent-1"><strong>end if</strong></div></div>
+
+          <div class="algo-line"><div class="algo-num">33:</div><div class="algo-code indent-1"><strong>if</strong> global episode termination <code>__all__</code> is true <strong>then</strong> log episode metrics and reset env</div></div>
+          <div class="algo-line"><div class="algo-num">34:</div><div class="algo-code indent-1"><strong>else</strong> set <code>O = O'</code></div></div>
+          <div class="algo-line"><div class="algo-num">35:</div><div class="algo-code"><strong>end while</strong></div></div>
+          <div class="algo-line"><div class="algo-num">36:</div><div class="algo-code">Save final actor/critic checkpoints.</div></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>这个伪代码和单智能体版相比的本质变化</h3>
+          <ul>
+            <li>采样阶段从“一个 obs -> 一个 action”变成“一个 obs_dict -> 一个 action_dict”。</li>
+            <li>存储阶段从“一条 transition”变成“每个 agent 各写一条 transition”。</li>
+            <li>训练阶段没有改成 joint-action critic，而是仍然按单 agent 样本做共享参数训练。</li>
+            <li>因此更准确的名字是：<strong>parameter-sharing multi-agent DIME</strong>。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>如果你要把它画成论文框图</h3>
+          <pre>多智能体环境
+   -> 各 agent 观测 o_i
+   -> 共享 Actor π_φ 分别产生 a_i
+   -> env.step({a_i})
+   -> 各 agent transition 分别入共享 Buffer
+   -> 从共享 Buffer 抽样
+   -> 共享 Critic / Actor 更新
+
+重点不要画成：
+joint state -> centralized critic -> joint action
+
+因为当前仓库代码并不是这种 CTDE 结构。</pre>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>6) 关键代码映射（读源码时最有用）</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>文件</th>
+            <th>作用</th>
+            <th>你重点看什么</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>run_dime.py</code></td>
+            <td>训练入口（单智能体）</td>
+            <td>环境构建、DIME 实例化、learn() 调用</td>
+          </tr>
+          <tr>
+            <td><code>run_multiagent_dime.py</code></td>
+            <td>训练入口（多智能体）</td>
+            <td>手写 MA 采样循环与 transition 入库</td>
+          </tr>
+          <tr>
+            <td><code>diffusion/dime.py</code></td>
+            <td>算法核心</td>
+            <td>update_critic、update_actor、_train、温度更新</td>
+          </tr>
+          <tr>
+            <td><code>diffusion/diffusion_policy.py</code></td>
+            <td>策略封装（DiffPol）</td>
+            <td>actor/critic 初始化、sample_action、predict</td>
+          </tr>
+          <tr>
+            <td><code>diffusion/od/dis.py</code></td>
+            <td>DIS 扩散模型初始化</td>
+            <td>prior、drift、forward_model 定义</td>
+          </tr>
+          <tr>
+            <td><code>diffusion/common/models/pisgrad_net.py</code></td>
+            <td>Actor 核心网络</td>
+            <td>时间编码、条件输入拼接、输出维度</td>
+          </tr>
+          <tr>
+            <td><code>models/critic.py</code></td>
+            <td>双 Q 分布式 Critic</td>
+            <td>VectorCritic、softmax atom 分布输出</td>
+          </tr>
+          <tr>
+            <td><code>configs/alg/dime.yaml</code></td>
+            <td>训练超参</td>
+            <td>policy_delay、utd、critic hs/n_atoms、v_min/v_max</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="foot">
+        备注：如果 observation 是 Dict，代码会先 flatten/concat 再送入网络（见 <code>BaseJaxPolicy.prepare_obs</code> 与 <code>DIME.train</code>）。
+      </div>
+    </section>
+  </div>
+</body>
+</html>

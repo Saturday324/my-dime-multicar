@@ -1,0 +1,13 @@
+name: metadrive_ma_5env
+sampling: uniform
+tasks:
+  - id: roundabout
+    env_config: metadrive_ma_roundabout
+  - id: intersection
+    env_config: metadrive_ma_intersection
+  - id: in_ramp
+    env_config: metadrive_ma_in_ramp
+  - id: out_ramp
+    env_config: metadrive_ma_out_ramp
+  - id: t_intersection
+    env_config: metadrive_ma_t_intersection

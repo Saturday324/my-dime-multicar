@@ -1,13 +1,31 @@
-__pycache__
-.idea
-**.log
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE / system files
+.idea/
+.vscode/
+.DS_Store
+
+# Logs
+*.log
 logs/
-wandb/
 eval_logs/
+
+# Experiment and training outputs
+wandb/
 outputs/
 checkpoints/
 best_models/
 videos/
+visualizations/map_sequence_renders/
+
+# Large generated artifacts
 *.msgpack
 *.mp4
-*.pyc
+*.pth
+*.pt
+*.ckpt
+*.pkl
+*.npz

@@ -1,0 +1,16 @@
+enabled: true
+algorithm: pearl
+latent_dim: 8
+meta_batch_tasks: 5
+context_batch_size: 64
+query_batch_size: 64
+online_context_size: 64
+min_task_buffer_size: 256
+encoder_hidden_dims: [256, 256]
+encoder_lr: 3.0e-4
+kl_coef: 1.0e-3
+task_decoder_hidden_dims: [128, 128]
+task_cls_coef: 0.1
+sample_posterior_during_training: true
+sample_posterior_during_rollout: false
+disjoint_context_query: true

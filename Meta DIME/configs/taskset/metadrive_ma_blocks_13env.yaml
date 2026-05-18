@@ -1,0 +1,29 @@
+name: metadrive_ma_blocks_13env
+sampling: uniform
+tasks:
+  - id: straight
+    env_config: metadrive_ma_block_straight
+  - id: curve
+    env_config: metadrive_ma_block_curve
+  - id: intersection
+    env_config: metadrive_ma_intersection
+  - id: uturn
+    env_config: metadrive_ma_block_uturn
+  - id: t_intersection
+    env_config: metadrive_ma_t_intersection
+  - id: roundabout
+    env_config: metadrive_ma_roundabout
+  - id: in_ramp
+    env_config: metadrive_ma_in_ramp
+  - id: out_ramp
+    env_config: metadrive_ma_out_ramp
+  - id: merge
+    env_config: metadrive_ma_block_merge
+  - id: split
+    env_config: metadrive_ma_block_split
+  - id: tollgate
+    env_config: metadrive_ma_block_tollgate
+  - id: bidirection
+    env_config: metadrive_ma_block_bidirection
+  - id: parking_lot
+    env_config: metadrive_ma_parking_lot

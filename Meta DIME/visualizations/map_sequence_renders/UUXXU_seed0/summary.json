@@ -1,0 +1,82 @@
+{
+  "map_sequence": "UUXXU",
+  "env_name": "metadrive/MultiAgentComposedEnv",
+  "seed": 0,
+  "num_scenarios": 1,
+  "num_agents": 20,
+  "traffic_mode": "basic",
+  "traffic_density": 0.0,
+  "traffic_policy": "idm",
+  "scene_steps": 0,
+  "active_agents": 20,
+  "obs_agents": 20,
+  "traffic_vehicles": 0,
+  "spawn_roads_count": 12,
+  "spawn_roads": [
+    {
+      "start": ">>",
+      "end": ">>>"
+    },
+    {
+      "start": "-1U0_1_",
+      "end": "-1U0_0_"
+    },
+    {
+      "start": "-1U1_1_",
+      "end": "-1U1_0_"
+    },
+    {
+      "start": "-2U0_1_",
+      "end": "-2U0_0_"
+    },
+    {
+      "start": "-2U2_1_",
+      "end": "-2U2_0_"
+    },
+    {
+      "start": "-3X1_1_",
+      "end": "-3X1_0_"
+    },
+    {
+      "start": "-3X2_1_",
+      "end": "-3X2_0_"
+    },
+    {
+      "start": "-4X0_1_",
+      "end": "-4X0_0_"
+    },
+    {
+      "start": "-4X1_1_",
+      "end": "-4X1_0_"
+    },
+    {
+      "start": "-5U0_1_",
+      "end": "-5U0_0_"
+    },
+    {
+      "start": "-5U1_1_",
+      "end": "-5U1_0_"
+    },
+    {
+      "start": "-5U2_1_",
+      "end": "-5U2_0_"
+    }
+  ],
+  "destinations": [
+    "->>",
+    "1U1_1_",
+    "2U0_1_",
+    "2U2_1_",
+    "3X1_1_",
+    "3X2_1_",
+    "4X0_1_",
+    "4X1_1_",
+    "5U0_1_",
+    "5U1_1_",
+    "5U2_1_"
+  ],
+  "files": {
+    "map": "/workspace/diffusion-rl/DIME/visualizations/map_sequence_renders/UUXXU_seed0/map.png",
+    "scene": "/workspace/diffusion-rl/DIME/visualizations/map_sequence_renders/UUXXU_seed0/scene.png"
+  }
+}

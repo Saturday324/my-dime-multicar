@@ -1,0 +1,58 @@
+{
+  "map_sequence": "XTXTS",
+  "env_name": "metadrive/MultiAgentComposedEnv",
+  "seed": 0,
+  "num_scenarios": 1,
+  "num_agents": 20,
+  "traffic_mode": "basic",
+  "traffic_density": 0.0,
+  "traffic_policy": "idm",
+  "scene_steps": 0,
+  "active_agents": 20,
+  "obs_agents": 20,
+  "traffic_vehicles": 0,
+  "spawn_roads_count": 7,
+  "spawn_roads": [
+    {
+      "start": ">>",
+      "end": ">>>"
+    },
+    {
+      "start": "-1X0_1_",
+      "end": "-1X0_0_"
+    },
+    {
+      "start": "-1X1_1_",
+      "end": "-1X1_0_"
+    },
+    {
+      "start": "-2T0_1_",
+      "end": "-2T0_0_"
+    },
+    {
+      "start": "-3X1_1_",
+      "end": "-3X1_0_"
+    },
+    {
+      "start": "-3X2_1_",
+      "end": "-3X2_0_"
+    },
+    {
+      "start": "-4T2_1_",
+      "end": "-4T2_0_"
+    }
+  ],
+  "destinations": [
+    "->>",
+    "1X0_1_",
+    "1X1_1_",
+    "2T0_1_",
+    "3X1_1_",
+    "3X2_1_",
+    "4T2_1_"
+  ],
+  "files": {
+    "map": "/workspace/diffusion-rl/DIME/visualizations/map_sequence_renders/XTXTS_seed0/map.png",
+    "scene": "/workspace/diffusion-rl/DIME/visualizations/map_sequence_renders/XTXTS_seed0/scene.png"
+  }
+}
